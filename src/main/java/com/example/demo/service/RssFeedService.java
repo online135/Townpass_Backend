@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.RssFeedResult;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
@@ -15,14 +16,18 @@ import java.util.stream.Collectors;
 @Service
 public class RssFeedService {
 
-    public String fetchAndFormatRssFeed(String url) {
+    public RssFeedResult fetchAndFormatRssFeed(String url) {
         StringBuilder content = new StringBuilder();
+        String title = "";
+
         try {
             URL feedSource = new URL(url);
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(new XmlReader(feedSource));
             
-            content.append("<h2>").append(feed.getTitle()).append("</h2>");
+            title = feed.getTitle();
+
+            content.append("<h2>").append(title).append("</h2>");
             
             // 取得資料以及排序
             List<SyndEntry> entries = feed.getEntries().stream()
@@ -54,7 +59,8 @@ public class RssFeedService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return content.toString();
+
+        return new RssFeedResult(title, content.toString());
     }
 
     private String truncateDescription(String description, int maxLength) {

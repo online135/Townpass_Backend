@@ -3,11 +3,7 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 // 通知列表
@@ -42,9 +35,6 @@ public class NotificationController {
     String method = "mail"; // Here we consider only "mail" for now
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
     private HttpServletRequest request; // Autowire HttpServletRequest
 
     public NotificationController() {
@@ -53,6 +43,7 @@ public class NotificationController {
         notice1.put("id", 1);
         notice1.put("category", "weather");
         notice1.put("hour", "7");
+        notice1.put("region", "tycg");
         notice1.put("noticeMethod", "mail");
         notice1.put("email", "b97b01067@gmail.com");
 
@@ -61,7 +52,8 @@ public class NotificationController {
         Map<String, Object> notice2 = new HashMap<>();
         notice2.put("id", 2);
         notice2.put("category", "news");
-        notice2.put("hour", "20");
+        notice2.put("hour", "22");
+        notice2.put("region", "taipei");
         notice1.put("noticeMethod", "mail");
         notice2.put("email", "b97b01067@g.ntu.edu.tw");
 
@@ -99,7 +91,7 @@ public class NotificationController {
         if ("mail".equalsIgnoreCase(notification.get("noticeMethod").toString()))
         {
             // Get dynamic URL
-            String apiUrl = getApiUrl(request, notification.get("email").toString());
+            String apiUrl = getApiUrl(request, notification.get("region").toString(), notification.get("email").toString());
             // Call the API
             String apiResponse = sendTycgNews(apiUrl);
             System.out.println("API Response: " + apiResponse);
@@ -143,13 +135,13 @@ public class NotificationController {
         return response;
     }
 
-    public static String getApiUrl(HttpServletRequest request, String email) {
+    public static String getApiUrl(HttpServletRequest request, String region, String email) {
         String scheme = request.getScheme();             // http or https
         String serverName = request.getServerName();     // Hostname or IP
         int serverPort = request.getServerPort();        // Server port
         String contextPath = request.getContextPath();   // Webapp's context path
 
         // Constructing the URL
-        return String.format("%s://%s:%d%s/send-tycg-news/%s", scheme, serverName, serverPort, contextPath, email);
+        return String.format("%s://%s:%d%s/send-news/%s", scheme, serverName, serverPort, contextPath, region, email);
     }
 }

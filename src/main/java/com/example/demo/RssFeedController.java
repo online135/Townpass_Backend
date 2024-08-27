@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.RssFeedResult;
 import com.example.demo.service.RssFeedService;
 
 @RestController
@@ -25,14 +29,38 @@ public class RssFeedController {
     @Autowired
     private JavaMailSender mailSender;
 
-    @GetMapping("/send-tycg-news/{email}")
-    public ResponseEntity<String> sendTycgNews(@PathVariable("email") String email) {
-        String rssUrl = "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145";
-        String rssContent = rssFeedService.fetchAndFormatRssFeed(rssUrl);
+
+    private Map<String, String> regionRssUrls;
+
+    public RssFeedController() {
+        // Initialize the region-to-RSS URL mapping
+        regionRssUrls = new HashMap<>();
+        regionRssUrls.put("tycg", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
+        regionRssUrls.put("taipei", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
+        regionRssUrls.put("taichung", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        // Add more regions as needed
+    }
+
+    private String getRssUrlByRegion(String region) {
+        return regionRssUrls.get(region);
+    }
+
+    @GetMapping("/send-news/{region}/{email}")
+    public ResponseEntity<String> sendRegionNews(@PathVariable("region") String region, @PathVariable("email") String email) {        
+        String rssUrl = getRssUrlByRegion(region);
         
+        if (rssUrl == null) {
+            return new ResponseEntity<>("Invalid region", HttpStatus.BAD_REQUEST);
+        }
+
+        RssFeedResult result = rssFeedService.fetchAndFormatRssFeed(rssUrl);
+        
+        String feedTitle = result.getTitle();
+        String feedContent = result.getContent();
+
         System.err.println(email);
         // Send email with the RSS content
-        sendEmailWithRssContent(email, "桃園政府市政新聞", rssContent);
+        sendEmailWithRssContent(email, feedTitle, feedContent);
         
         return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
     }
