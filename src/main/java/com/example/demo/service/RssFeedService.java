@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.model.RssFeedItem;
 import com.example.demo.model.RssFeedResult;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -9,6 +10,7 @@ import com.rometools.rome.io.XmlReader;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +19,9 @@ import java.util.stream.Collectors;
 public class RssFeedService {
 
     public RssFeedResult fetchAndFormatRssFeed(String url) {
-        StringBuilder content = new StringBuilder();
         String title = "";
+        String link = "";
+        List<RssFeedItem> items = new ArrayList<>();
 
         try {
             URL feedSource = new URL(url);
@@ -26,9 +29,8 @@ public class RssFeedService {
             SyndFeed feed = input.build(new XmlReader(feedSource));
             
             title = feed.getTitle();
+            link = feed.getLink();
 
-            content.append("<h2>").append(title).append("</h2>");
-            
             // 取得資料以及排序
             List<SyndEntry> entries = feed.getEntries().stream()
             .sorted((e1, e2) -> {
@@ -43,24 +45,23 @@ public class RssFeedService {
             .collect(Collectors.toList());
 
             for (SyndEntry entry : entries) {
-                content.append("<div>");
-                content.append("<h3><a href=\"").append(entry.getLink()).append("\" target=\"_blank\">");
-                content.append(entry.getTitle()).append("</a></h3>");
-                
-                // 限制描述內容的長度
-                String description = entry.getDescription().getValue();
-                String truncatedDescription = truncateDescription(description, 200); // 限制到200字
-                
-                content.append("<p>").append(truncatedDescription).append("詳情請點").append(" <a href=\"").append(entry.getLink()).append("\" target=\"_blank\">連結</a></p>");
-                content.append("<small>").append(entry.getPublishedDate()).append("</small>");
-                content.append("<hr />");
-                content.append("</div>");
+                // Limit the description length
+                String description = entry.getDescription() != null ? entry.getDescription().getValue() : "";
+                String truncatedDescription = truncateDescription(description, 200);
+
+                RssFeedItem item = new RssFeedItem(
+                    entry.getTitle(),
+                    entry.getLink(),
+                    truncatedDescription
+                );
+
+                items.add(item);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new RssFeedResult(title, content.toString());
+        return new RssFeedResult(title, link, items);
     }
 
     private String truncateDescription(String description, int maxLength) {

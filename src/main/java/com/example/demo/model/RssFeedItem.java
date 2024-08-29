@@ -1,16 +1,15 @@
 package com.example.demo.model;
 
-import java.util.List;
-
-public class RssFeedResult {
+public class RssFeedItem {
     private String title;
     private String link;
-    private List<RssFeedItem> items;
+    private String description;
 
-    public RssFeedResult(String title, String link, List<RssFeedItem> items) {
+    // Constructors, getters, and setters
+    public RssFeedItem(String title, String link, String description) {
         this.title = title;
         this.link = link;
-        this.items = items;
+        this.description = description;
     }
 
     public String getTitle() {
@@ -29,11 +28,11 @@ public class RssFeedResult {
         this.link = link;
     }
 
-    public List<RssFeedItem> getItems() {
-        return items;
+    public String getDescription() {
+        return description;
     }
 
-    public void setItems(List<RssFeedItem> items) {
-        this.items = items;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

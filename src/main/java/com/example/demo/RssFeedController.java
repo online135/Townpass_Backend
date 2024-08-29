@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.RssFeedResult;
+import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
+import com.example.demo.service.SmsService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,6 +31,11 @@ public class RssFeedController {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private SmsService smsService;  // Inject SMS service
+
+    @Autowired
+    private LineNotifyService lineNotifyService;
 
     private Map<String, String> regionRssUrls;
 
@@ -45,32 +52,51 @@ public class RssFeedController {
         return regionRssUrls.get(region);
     }
 
-    @GetMapping("/send-news/{region}/{email}")
-    public ResponseEntity<String> sendRegionNews(@PathVariable("region") String region, @PathVariable("email") String email) {        
+    @GetMapping("/send-news/{region}/{noticeMethod}/{recipient}")
+    public ResponseEntity<String> sendRegionNews(
+        @PathVariable("region") String region, 
+        @PathVariable("noticeMethod") String noticeMethod, 
+        @PathVariable("recipient") String recipient) {   
+
         String rssUrl = getRssUrlByRegion(region);
         
         if (rssUrl == null) {
             return new ResponseEntity<>("Invalid region", HttpStatus.BAD_REQUEST);
         }
 
-        RssFeedResult result = rssFeedService.fetchAndFormatRssFeed(rssUrl);
-        
-        String feedTitle = result.getTitle();
-        String feedContent = result.getContent();
+        RssFeedResult rssFeedResult = rssFeedService.fetchAndFormatRssFeed(rssUrl);
 
-        System.err.println(email);
-        // Send email with the RSS content
-        sendEmailWithRssContent(email, feedTitle, feedContent);
-        
-        return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
+        switch(noticeMethod)
+        {
+            // email
+            case "email":
+                sendEmailWithRssContent(recipient, rssFeedResult);
+
+                return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
+            
+            // line
+            case "line":
+                lineNotifyService.sendNotification(rssFeedResult);
+
+                return new ResponseEntity<>("RSS feed sent via LINE Notify successfully", HttpStatus.OK);
+            
+            // sms
+            case "sms":
+                smsService.sendNotification(rssFeedResult);
+
+                return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
+            default:
+                return new ResponseEntity<>("Invalid notification method", HttpStatus.BAD_REQUEST);
+
+        }
     }
 
-    private void sendEmailWithRssContent(String to, String subject, String content) {
+    private void sendEmailWithRssContent(String to, RssFeedResult rssFeedResult) {
         MimeMessagePreparator preparator = mimeMessage -> {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             message.setTo(to);
-            message.setSubject(subject);
-            message.setText(content, true); // 'true' indicates HTML content
+            message.setSubject(rssFeedResult.getTitle());
+            message.setText(rssFeedResult.getTitle(), true); // 'true' indicates HTML content
         };
 
         try {
