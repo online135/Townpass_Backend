@@ -62,7 +62,7 @@ public class NotificationController {
                 2, 
                 "news", 
                 "21", 
-                "taipei", 
+                "taipei", // subject
                 "mail", 
                 "b97b01067@g.ntu.edu.tw", 
                 "json")
@@ -70,8 +70,20 @@ public class NotificationController {
 
     }
 
+    // 請 品橋 在 以下 範圍完成 CRUD 的 web api 開發, 針對 Notification 這份資料 (上面的), 然後測試時可以用 postman 去呼叫可以操作資料 restful api
+    // 請參考 https://github.com/online135/hackathon_practice_spring_boot/blob/main/src/main/java/com/example/demo/DataController.java 去寫
 
-    
+    // (1) 列出全部資料 (list)
+
+    // (2) 列出單一資料 (by Id)
+
+    // (3) 新增資料 post
+
+    // (4) 更新資料 put
+
+    // (5) 刪除資料 delete
+
+    // 請 品橋 在 以上 範圍完成 CRUD 的 web api 開發, 針對 Notification 這份資料 (上面的), 然後測試時可以用 postman 去呼叫可以操作資料
 
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
