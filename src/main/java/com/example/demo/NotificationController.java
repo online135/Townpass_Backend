@@ -61,7 +61,7 @@ public class NotificationController {
             new Notification(
                 2, 
                 "news", 
-                "20", 
+                "21", 
                 "taipei", 
                 "mail", 
                 "b97b01067@g.ntu.edu.tw", 
@@ -69,6 +69,9 @@ public class NotificationController {
             );
 
     }
+
+
+    
 
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
@@ -98,6 +101,8 @@ public class NotificationController {
     }
 
     private void performCrontabTask(Notification notification) {
+
+        System.out.println(notification.getEmail());
         //     @GetMapping("/send-news/{region}/{noticeMethod}/{recipient}")
     }
 }

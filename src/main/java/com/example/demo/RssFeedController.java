@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.model.RssFeedItem;
 import com.example.demo.model.RssFeedResult;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
@@ -96,7 +97,29 @@ public class RssFeedController {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             message.setTo(to);
             message.setSubject(rssFeedResult.getTitle());
-            message.setText(rssFeedResult.getTitle(), true); // 'true' indicates HTML content
+
+            // Construct the HTML content
+            StringBuilder emailContent = new StringBuilder();
+            emailContent.append("<div style='font-family: Arial, sans-serif; color: #333;'>")
+                        .append("<h2 style='color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px;'>")
+                        .append(rssFeedResult.getTitle()).append("</h2>")
+                        .append("<p style='font-size: 14px; color: #333;'>更多資訊請看 <a href=\"").append(rssFeedResult.getLink())
+                        .append("\" style='color: #1a73e8; text-decoration: none;'>這裡</a>。</p>");
+
+            // Append each item in the RSS feed with the link at the end as "連結"
+            for (RssFeedItem item : rssFeedResult.getItems()) {
+                emailContent.append("<div style='border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 15px; border-radius: 8px; background-color: #f9f9f9;'>")
+                            .append("<h3 style='color: #0056b3; margin-bottom: 8px;'>").append(item.getTitle()).append("</h3>")
+                            .append("<p style='font-size: 14px; color: #555;'>").append(item.getDescription()).append("</p>")
+                            .append("<p style='font-size: 14px; margin-top: 10px;'>更多內容請看 <a href=\"").append(item.getLink())
+                            .append("\" style='color: #1a73e8; text-decoration: none;'>連結</a></p>")
+                            .append("</div>");
+            }
+
+            emailContent.append("</div>");
+
+            // Set the constructed HTML content as the email body
+            message.setText(emailContent.toString(), true); // 'true' indicates the content is HTML
         };
 
         try {

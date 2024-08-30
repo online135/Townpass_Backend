@@ -48,11 +48,11 @@ public class RssFeedService {
                 // Limit the description length
                 String description = entry.getDescription() != null ? entry.getDescription().getValue() : "";
                 String truncatedDescription = truncateDescription(description, 200);
-
+                
                 RssFeedItem item = new RssFeedItem(
                     entry.getTitle(),
                     entry.getLink(),
-                    truncatedDescription
+                    truncatedDescription // 長度 200, 看 50 行
                 );
 
                 items.add(item);
