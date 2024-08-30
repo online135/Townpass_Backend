@@ -85,6 +85,18 @@ public class NotificationController {
 
     // 請 品橋 在 以上 範圍完成 CRUD 的 web api 開發, 針對 Notification 這份資料 (上面的), 然後測試時可以用 postman 去呼叫可以操作資料
 
+
+    // 其餘任務範圍 api
+
+    // (1) 強制執行(測試執行) api 口
+
+    // (2) 更新資料端口 2  => 切換這個 排程 status 開關 (暫時不使用)
+
+    // 下面兩個要放在 RssFeed controller, 但先集中放這裡
+    // (3) 拉出大選單 api
+
+    // (4) 拉出小選單 api
+
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
         return new ResponseEntity<>(noticeList, HttpStatus.OK);
