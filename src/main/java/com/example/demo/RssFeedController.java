@@ -53,7 +53,7 @@ public class RssFeedController {
         return subjectRssUrls.get(subject);
     }
 
-    @GetMapping("/send-news/{subject}/{noticeMethod}/{recipient}")
+    @GetMapping("/send-subject/{subject}/{noticeMethod}/{recipient}")
     public ResponseEntity<String> sendSubject(
         @PathVariable("subject") String subject, 
         @PathVariable("noticeMethod") String noticeMethod, 
