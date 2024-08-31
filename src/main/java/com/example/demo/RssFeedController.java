@@ -38,31 +38,31 @@ public class RssFeedController {
     @Autowired
     private LineNotifyService lineNotifyService;
 
-    private Map<String, String> regionRssUrls;
+    private Map<String, String> subjectRssUrls;
 
     public RssFeedController() {
-        // Initialize the region-to-RSS URL mapping
-        regionRssUrls = new HashMap<>();
-        regionRssUrls.put("tycg", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
-        regionRssUrls.put("taipei", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
-        regionRssUrls.put("taichung", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        // Initialize the subject-to-RSS URL mapping
+        subjectRssUrls = new HashMap<>();
+        subjectRssUrls.put("tycg", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
+        subjectRssUrls.put("taipei", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
+        subjectRssUrls.put("taichung", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
         // Add more regions as needed
     }
 
-    private String getRssUrlByRegion(String region) {
-        return regionRssUrls.get(region);
+    private String getRssUrlBySubject(String subject) {
+        return subjectRssUrls.get(subject);
     }
 
-    @GetMapping("/send-news/{region}/{noticeMethod}/{recipient}")
-    public ResponseEntity<String> sendRegionNews(
-        @PathVariable("region") String region, 
+    @GetMapping("/send-news/{subject}/{noticeMethod}/{recipient}")
+    public ResponseEntity<String> sendSubject(
+        @PathVariable("subject") String subject, 
         @PathVariable("noticeMethod") String noticeMethod, 
         @PathVariable("recipient") String recipient) {   
 
-        String rssUrl = getRssUrlByRegion(region);
+        String rssUrl = getRssUrlBySubject(subject);
         
         if (rssUrl == null) {
-            return new ResponseEntity<>("Invalid region", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid subject", HttpStatus.BAD_REQUEST);
         }
 
         RssFeedResult rssFeedResult = rssFeedService.fetchAndFormatRssFeed(rssUrl);
@@ -103,7 +103,7 @@ public class RssFeedController {
             emailContent.append("<div style='font-family: Arial, sans-serif; color: #333;'>")
                         .append("<h2 style='color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px;'>")
                         .append(rssFeedResult.getTitle()).append("</h2>")
-                        .append("<p style='font-size: 14px; color: #333;'>更多資訊請看 <a href=\"").append(rssFeedResult.getLink())
+                        .append("<p style='font-size: 14px; color: #333;'>更多內容請看 <a href=\"").append(rssFeedResult.getLink())
                         .append("\" style='color: #1a73e8; text-decoration: none;'>這裡</a>。</p>");
 
             // Append each item in the RSS feed with the link at the end as "連結"
