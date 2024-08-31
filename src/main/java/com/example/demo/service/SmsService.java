@@ -18,7 +18,7 @@ public class SmsService {
     String connectionString = "endpoint=https://<resource-name>.communication.azure.com/;accesskey=<access-key>";
 
 
-    public void sendNotification(RssFeedResult rssFeedResult) {  
+    public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("【")
@@ -42,18 +42,18 @@ public class SmsService {
         String body = encodedMessage + encodedLink;
 
 
-        // SmsClient smsClient = new SmsClientBuilder()
-        // .connectionString(connectionString)
-        // .buildClient();
-        // SmsSendResult sendResult = smsClient.send(
-        //           "+886937338506",
-        //           "+886937338506",
-        //           encodedMessage
-        // );
-  
+        SmsClient smsClient = new SmsClientBuilder()
+        .connectionString(connectionString)
+        .buildClient();
+        SmsSendResult sendResult = smsClient.send(
+                  "+886937338506",
+                  "+886" + recipient,
+                  encodedMessage
+        );
+        System.out.println("Recipient Number: " + sendResult.getTo());
+        System.out.println("Send Result Successful:" + sendResult.isSuccessful());
+
         System.out.println(body);
-        // System.out.println("Recipient Number: " + sendResult.getTo());
-        // System.out.println("Send Result Successful:" + sendResult.isSuccessful());
       } catch (Exception e) {
         System.err.println("Error sending notification: " + e.getMessage());
       }
