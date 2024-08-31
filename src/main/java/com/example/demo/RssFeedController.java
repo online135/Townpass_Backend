@@ -1,16 +1,11 @@
 package com.example.demo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,14 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.RssFeedItem;
 import com.example.demo.model.RssFeedResult;
 import com.example.demo.model.Subject;
 import com.example.demo.model.SubjectCategory;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
-import com.example.demo.service.SmsService;
+import com.example.demo.service.WhatsAppService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -40,7 +34,7 @@ public class RssFeedController {
     private EmailService emailService;
 
     @Autowired
-    private SmsService smsService;  // Inject SMS service
+    private WhatsAppService whatsAppService;  // Inject WhatsAppService
 
     @Autowired
     private LineNotifyService lineNotifyService;
@@ -101,7 +95,7 @@ public class RssFeedController {
     public ResponseEntity<String> sendSubject(
         @RequestParam("subject") String subject, 
         @RequestParam("noticeMethod") String noticeMethod, 
-        @RequestParam("recipient") String recipient) {   
+        @RequestParam(value = "recipient", required = false) String recipient) {   
 
         String rssUrl = getRssUri(subject);
         System.out.println(rssUrl);
@@ -116,6 +110,10 @@ public class RssFeedController {
         {
             // email
             case "email":
+                if (recipient == null || !isValidEmail(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing email address", HttpStatus.BAD_REQUEST);
+                }
+
                 emailService.sendEmailWithRssContent(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
             
@@ -124,14 +122,30 @@ public class RssFeedController {
                 lineNotifyService.sendNotification(rssFeedResult);
                 return new ResponseEntity<>("RSS feed sent via LINE Notify successfully", HttpStatus.OK);
             
-            // sms
-            case "sms":
-                smsService.sendNotification(rssFeedResult, recipient);
-                return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
+            // whatsapp
+            case "whatsapp":
+                if (recipient == null || !isValidPhoneNumber(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
+                }
+
+                whatsAppService.sendNotification(rssFeedResult, recipient);
+                return new ResponseEntity<>("RSS feed sent via whatsapp successfully", HttpStatus.OK);
 
             default:
                 return new ResponseEntity<>("Invalid notification method", HttpStatus.BAD_REQUEST);
 
         }
+    }
+
+    // Basic validation for email addresses
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        return email.matches(emailRegex);
+    }
+
+    // Basic validation for phone numbers (e.g., digits only, 7-15 characters)
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        String phoneRegex = "^\\d{7,15}$";
+        return phoneNumber.matches(phoneRegex);
     }
 }
