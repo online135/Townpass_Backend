@@ -8,8 +8,11 @@ import com.twilio.rest.api.v2010.account.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * SMS 的會不能執行, 因為有比較麻煩, 實際用 whatsAppService 處理
+ */
 @Service
-public class WhatsAppService {
+public class SMSAppService {
 
     @Value("${twilio.accountsid}")
     private String ACCOUNT_SID;
@@ -33,12 +36,16 @@ public class WhatsAppService {
           String body = encodedMessage + encodedLink;
 
           // 初始化 Twilio
+          // 錯誤原因 
+          // Permission to send an SMS or MMS has not been enabled for the region indicated by the 'To' number
+          // Your message content was flagged as going against carrier guidelines.
           Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
           Message message = Message.creator(
-            new com.twilio.type.PhoneNumber("whatsapp:+886937338506"),
-            new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
+            new com.twilio.type.PhoneNumber("+886937338506"),
+            new com.twilio.type.PhoneNumber("+16503977032"),
             body
           ).create();
+          System.out.println(message.getSid());
           
           System.out.println("Recipient Number: " + recipient);
           System.out.println("Send Result Success");

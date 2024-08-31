@@ -83,11 +83,6 @@ public class NotificationController {
 
     // (2) 更新資料端口 2  => 切換這個 排程 status 開關 (暫時不使用)
 
-    // 下面兩個要放在 RssFeed controller, 但先集中放這裡
-    // (3) 拉出大選單 api
-
-    // (4) 拉出小選單 api
-
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
         return new ResponseEntity<>(noticeList, HttpStatus.OK);

@@ -20,6 +20,7 @@ import com.example.demo.model.SubjectCategory;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
+import com.example.demo.service.SMSAppService;
 import com.example.demo.service.WhatsAppService;
 
 @RestController
@@ -35,6 +36,9 @@ public class RssFeedController {
 
     @Autowired
     private WhatsAppService whatsAppService;  // Inject WhatsAppService
+
+    @Autowired
+    private SMSAppService smsAppService;  // Inject SMSAppService
 
     @Autowired
     private LineNotifyService lineNotifyService;
@@ -130,6 +134,16 @@ public class RssFeedController {
 
                 whatsAppService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via whatsapp successfully", HttpStatus.OK);
+
+            // sms, 可寄但不使用, 因為要串台灣簡訊商三竹等才可以寄送(需再申請對應api, token 等)
+            // case "sms":
+            //     if (recipient == null || !isValidPhoneNumber(recipient)) {
+            //         return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
+            //     }
+
+            //     smsAppService.sendNotification(rssFeedResult, recipient);
+            //     return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
+
 
             default:
                 return new ResponseEntity<>("Invalid notification method", HttpStatus.BAD_REQUEST);
