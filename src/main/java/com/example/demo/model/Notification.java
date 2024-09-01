@@ -13,18 +13,20 @@ public class Notification {
     private String dayOfWeek;
     private int hour;
     private int minute;
+    private boolean isActive;
 
     public Notification(
         int id, 
-        String category, // 通知的類別 ex: news
-        String subject,  // 通知的主題或標題 ex: taipei_news
-        String noticeMethod, // line
+        String category,            // 通知的大類別 ex: news
+        String subject,             // 通知的主題或標題 ex: taipei_news
+        String noticeMethod,        // line, email, sms, whatsapp
         String email,  
         String phone,
         String lineNotifyToken,
-        String dayOfWeek,  // 3,5
-        int hour,  // 20
-        int minute // 53
+        String dayOfWeek,           // 3,5  1~7 周一 ~ 週日
+        int hour,                   // 20時
+        int minute,                 // 53分
+        boolean isActive            // 是否啟動中
     ) {
         this.id = id;
         this.category = category;
@@ -36,6 +38,7 @@ public class Notification {
         this.dayOfWeek = dayOfWeek;
         this.hour = hour;
         this.minute = minute;
+        this.isActive = isActive;
     }
 
     // Getters and Setters
@@ -120,4 +123,11 @@ public class Notification {
         this.minute = minute;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
 }

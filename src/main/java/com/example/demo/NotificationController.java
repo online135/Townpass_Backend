@@ -55,7 +55,8 @@ public class NotificationController {
                 "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
                 "3,5",
                 7, 
-                22)
+                22,
+                true)
             );
         noticeList.add(
             new Notification(
@@ -68,7 +69,8 @@ public class NotificationController {
                 "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
                 "7",
                 11, 
-                57)
+                57,
+                true)
             );
 
     }
@@ -128,6 +130,12 @@ public class NotificationController {
         for (Notification notification : noticeList) {
             System.out.println("====================================================");
             System.out.println("開始進行 "+ notification.getSubject() + " 執行與否判斷");
+
+            // 檢查是否啟動中
+            if (!notification.isActive()) {
+                System.out.println("非啟動中，跳過");
+                continue; // 如果小時不對，跳到下一個通知
+            }
 
             // 解析通知的 weekday（用逗號分隔）
             String notificationWeekdays = notification.getDayOfWeek(); // 假設 weekday 是字串，如 "1,2,3"
