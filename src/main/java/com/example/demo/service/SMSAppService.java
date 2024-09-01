@@ -1,16 +1,37 @@
 package com.example.demo.service;
 
-import com.example.demo.model.RssFeedResult;
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
+import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.model.RssFeedResult;
+
 /**
- * SMS 的會不能執行, 因為有比較麻煩, 實際用 whatsAppService 處理
+ * 
+三竹簡訊真的很妙， API 會根據註冊的站（現有二站、三站）也有不同的 API 網域名稱和請求路徑。
+要不是這次串接碰到雷，客服打電話過來聯繫，我還真不知道這回事。
+也難怪官網上面的 API 文件中，請求網域名稱居然是用變數，然後也不說是什麼，找半天！
+後來電話解釋 API 功能是企業客戶才可以使用，所以那份文件也會隨著開通的同時完整轉交給客戶，自然串接就不會發生問題。
+http://smexpress[.]mitake[.]com[.]tw[:]9600/
+和
+http://smexpress[.]mitake[.]com[.]tw/
+和
+http://smsb2c[.]mitake[.]com[.]tw
+和
+http://smsapi[.]mitake[.]com[.]tw
+上述都是 API 網域，但請求方式和對應站點都不太一樣呢！！ 先筆記起這個雷...
+
+
+我是用二站註冊的
  */
+
+
 @Service
 public class SMSAppService {
 
@@ -19,6 +40,7 @@ public class SMSAppService {
 
     @Value("${twilio.authtoken}")
     private String AUTH_TOKEN;
+    
 
     public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {   
@@ -35,18 +57,28 @@ public class SMSAppService {
     
           String body = encodedMessage + encodedLink;
 
-          // 初始化 Twilio
-          // 錯誤原因 
-          // Permission to send an SMS or MMS has not been enabled for the region indicated by the 'To' number
-          // Your message content was flagged as going against carrier guidelines.
-          Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-          Message message = Message.creator(
-            new com.twilio.type.PhoneNumber("+886937338506"),
-            new com.twilio.type.PhoneNumber("+16503977032"),
-            body
-          ).create();
-          System.out.println(message.getSid());
+
+          StringBuffer reqUrl = new StringBuffer();
+          reqUrl.append("http://smsapi.mitake.com.tw/b2c/mtk/SmSend?");
+          StringBuffer params = new StringBuffer();
+          params.append("&username=0937338506");
+          params.append("&password=gn00311869");
+          params.append("&dstaddr=" + recipient);
+          params.append("&smbody=" + body);
+          params.append("&CharsetURL=UTF-8");
+          URL url = new URL(reqUrl.toString());
+          HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+          urlConnection.setRequestMethod("POST");
+          urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+          urlConnection.setDoOutput(true);
+          urlConnection.connect();
+          DataOutputStream dos = new DataOutputStream(urlConnection.getOutputStream());
+          dos.write(params.toString().getBytes("utf-8"));
+          System.out.println((dos));
+          dos.flush();
+          dos.close();
           
+          // 在測試環境成功的話是不會收到簡訊的，而是會收到回傳回來的狀態（所以要理解狀態代碼的意思）跟一段提示成功 or 失敗的訊息
           System.out.println("Recipient Number: " + recipient);
           System.out.println("Send Result Success");
 

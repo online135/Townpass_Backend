@@ -135,14 +135,16 @@ public class RssFeedController {
                 whatsAppService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via whatsapp successfully", HttpStatus.OK);
 
-            // sms, 可寄但不使用, 因為要串台灣簡訊商三竹等才可以寄送(需再申請對應api, token 等)
-            // case "sms":
-            //     if (recipient == null || !isValidPhoneNumber(recipient)) {
-            //         return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
-            //     }
+            // sms, 要串台灣簡訊商 三竹 等才可以寄送(需再申請對應api, token 等)
+            // https://www.twsms.com/
+            // 三竹簡訊 https://msg.mitake.com.tw/SMS/Home.jsp?t=1725121253337
+            case "sms":
+                if (recipient == null || !isValidPhoneNumber(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
+                }
 
-            //     smsAppService.sendNotification(rssFeedResult, recipient);
-            //     return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
+                smsAppService.sendNotification(rssFeedResult, recipient);
+                return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
 
 
             default:
