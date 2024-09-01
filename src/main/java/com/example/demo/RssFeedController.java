@@ -99,7 +99,7 @@ public class RssFeedController {
     public ResponseEntity<String> sendSubject(
         @RequestParam("subject") String subject, 
         @RequestParam("noticeMethod") String noticeMethod, 
-        @RequestParam(value = "recipient", required = false) String recipient) {   
+        @RequestParam("recipient") String recipient) {   
 
         String rssUrl = getRssUri(subject);
         System.out.println(rssUrl);
@@ -123,7 +123,7 @@ public class RssFeedController {
             
             // line
             case "line":
-                lineNotifyService.sendNotification(rssFeedResult);
+                lineNotifyService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via LINE Notify successfully", HttpStatus.OK);
             
             // whatsapp

@@ -19,15 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class LineNotifyService {
 
-    @Value("${line.notify.token}")
-    private String accessToken;
-
     private static final String LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify";
 
-    public void sendNotification(RssFeedResult rssFeedResult) {
+    public void sendNotification(RssFeedResult rssFeedResult, String recipient) {
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + accessToken);
+            headers.set("Authorization", "Bearer " + recipient);
             headers.set("Content-Type", "application/x-www-form-urlencoded");
 
             // Get the current date formatted as "yyyy-MM-dd"

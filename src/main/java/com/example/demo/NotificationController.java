@@ -3,20 +3,24 @@ package com.example.demo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.model.Notification;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,6 +33,8 @@ import java.util.List;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 	
+    private RestTemplate restTemplate = new RestTemplate(); // 可以使用 Bean 來注入 RestTemplat
+
     private List<Notification> noticeList = new ArrayList<>();
 
     String method = "mail"; // Here we consider only "mail" for now
@@ -42,21 +48,27 @@ public class NotificationController {
             new Notification(
                 1, 
                 "weather", 
-                "7", 
                 "tycg", 
                 "line", 
-                "b97b01067@gmail.com", 
-                "rss")
+                "b97b01067@gmail.com",
+                "0937338506",
+                "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
+                "3,5",
+                7, 
+                22)
             );
         noticeList.add(
             new Notification(
                 2, 
                 "news", 
-                "21", 
                 "taipei", // subject
-                "mail", 
-                "b97b01067@g.ntu.edu.tw", 
-                "json")
+                "email", 
+                "b97b01067@g.ntu.edu.tw",
+                "0937338506",
+                "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
+                "7",
+                11, 
+                57)
             );
 
     }
@@ -98,21 +110,86 @@ public class NotificationController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Scheduled task to check notifications every minute
-    // @Scheduled(cron = "0 * * * * *") // Executes every minute
+    // 排程任務，每分鐘檢查一次通知
+    // @Scheduled(cron = "0 * * * * *") // 每分鐘執行一次
     public void checkNotifications() {
-        // Get the current hour in 24-hour format as a string (e.g., "07")
-        String currentHour = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH"));
+        // 取得當前時間並格式化
+        LocalDateTime now = LocalDateTime.now();
+        String formattedTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        // 顯示現在時間
+        System.out.println("現在時間: " + formattedTime);
+
+        // 取得當前時間 (e.g., "07")
+        DayOfWeek currentWeekday = now.getDayOfWeek();
+        int currentHour = now.getHour();
+        int currentMinute = now.getMinute();
+
         for (Notification notification : noticeList) {
-            if (notification.getHour().equals(currentHour)) {
-                performCrontabTask(notification);
+            System.out.println("====================================================");
+            System.out.println("開始進行 "+ notification.getSubject() + " 執行與否判斷");
+
+            // 解析通知的 weekday（用逗號分隔）
+            String notificationWeekdays = notification.getDayOfWeek(); // 假設 weekday 是字串，如 "1,2,3"
+            List<String> notificationWeekdayList = Arrays.asList(notificationWeekdays.split(","));
+
+            // 檢查當前星期是否在通知的 weekday 列表中
+            String currentWeekdayValue = String.valueOf(currentWeekday.getValue());
+            // 星期一為 1, 星期天為 7
+            if (!notificationWeekdayList.contains(currentWeekdayValue)) {
+                System.out.println("星期不對，跳過");
+                continue; // 如果星期不對，跳到下一個通知
             }
+
+            // 檢查小時是否匹配
+            if (notification.getHour() != currentHour) {
+                System.out.println("小時不對，跳過");
+                continue; // 如果小時不對，跳到下一個通知
+            }
+
+            // 檢查分鐘是否匹配
+            if (notification.getMinute() != currentMinute) {
+                System.out.println("分鐘不對，跳過");
+                continue; // 如果分鐘不對，跳到下一個通知
+            }
+
+            System.out.println("開始執行: "+ notification.getSubject());
+            performCrontabTask(notification);
         }
     }
 
     private void performCrontabTask(Notification notification) {
+        // 實作通知的執行邏輯
+        String url = "http://localhost:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
 
-        System.out.println(notification.getEmail());
-        //     @GetMapping("/send-news/{region}/{noticeMethod}/{recipient}")
+        String recipient = getRecipient(notification);
+
+        // 使用 URI Builder 構建完整 URL 和參數
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("subject", notification.getSubject())
+                .queryParam("noticeMethod", notification.getNoticeMethod())
+                .queryParam("recipient", recipient);
+
+        try {
+            // 發送 POST 請求
+            ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), null, String.class);
+            System.out.println("通知發送成功: " + response.getBody());
+        } catch (Exception e) {
+            System.err.println("通知發送失敗: " + e.getMessage());
+        }
+    }
+
+    // 這是一個簡單的幫助方法來根據通知方法選擇聯絡人
+    private String getRecipient(Notification notification) {
+        switch (notification.getNoticeMethod().toLowerCase()) {
+            case "email":
+                return notification.getEmail();
+            case "sms":
+                return notification.getPhone();
+            case "line":
+                return notification.getLineNotifyToken();
+            default:
+                return "";
+        }
     }
 }
