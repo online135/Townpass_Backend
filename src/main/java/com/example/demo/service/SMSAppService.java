@@ -3,9 +3,6 @@ package com.example.demo.service;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -35,8 +35,8 @@ public class WhatsAppService {
           // 初始化 Twilio
           Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
           Message message = Message.creator(
-            new com.twilio.type.PhoneNumber("whatsapp:+886937338506"),
-            new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),
+            new com.twilio.type.PhoneNumber("whatsapp:+886937338506"), // to
+            new com.twilio.type.PhoneNumber("whatsapp:+14155238886"),  // from
             body
           ).create();
           

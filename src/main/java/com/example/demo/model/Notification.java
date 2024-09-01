@@ -1,7 +1,5 @@
 package com.example.demo.model;
 
-import java.time.DayOfWeek;
-
 public class Notification {
     private int id;
     private String category;
