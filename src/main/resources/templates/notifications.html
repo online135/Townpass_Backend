@@ -1,62 +1,64 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Notifications</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
     <script>
-        // Function to fetch categories and populate the dropdown
-        function fetchCategories() {
-            fetch('http://192.168.1.102:8080/api/rss/categories')
-                .then(response => response.json())
-                .then(data => {
-                    // Find the dropdown element
-                    const dropdown = document.getElementById('categoriesDropdown');
-                    dropdown.innerHTML = ''; // Clear existing options
-                    
-                    // Create a default option
-                    const defaultOption = document.createElement('option');
-                    defaultOption.text = 'Select a category';
-                    defaultOption.value = '';
-                    dropdown.appendChild(defaultOption);
-
-                    // Populate dropdown with fetched categories
-                    data.forEach(category => {
-                        const option = document.createElement('option');
-                        option.text = category.displayName; // Assuming each category has a 'name' field
-                        option.value = category.code;  // Assuming each category has an 'id' field
-                        dropdown.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching categories:', error);
-                    alert('Failed to load categories.');
-                });
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            new Vue({
+                el: '#app',
+                data: {
+                    categories: [],
+                    notifications: [], // Assuming you will load notifications from somewhere
+                    selectedCategory: ''
+                },
+                methods: {
+                    fetchCategories() {
+                        fetch('http://192.168.1.102:8080/api/rss/categories')
+                            .then(response => response.json())
+                            .then(data => {
+                                this.categories = data;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching categories:', error);
+                                alert('Failed to load categories.');
+                            });
+                    }
+                }
+            });
+        });
     </script>
 </head>
 <body>
-    <h1>Notifications</h1>
-
-    <!-- Button to fetch and populate the dropdown -->
-    <button onclick="fetchCategories()">Fetch Categories</button>
-
-    <!-- Dropdown to display fetched categories -->
-    <select id="categoriesDropdown">
-        <option value="">Select a category</option>
-    </select>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Category</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="notification : ${notifications}">
-                <td th:text="${notification.id}"></td>
-                <td th:text="${notification.category}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="app">
+        <h1>Notifications</h1>
+        
+        <!-- Button to fetch and populate the dropdown -->
+        <button @click="fetchCategories">Fetch Categories</button>
+        
+        <!-- Dropdown to display fetched categories -->
+        <select v-model="selectedCategory">
+            <option value="">Select a category</option>
+            <option v-for="category in categories" :key="category.code" :value="category.code">
+                {{ category.displayName }}
+            </option>
+        </select>
+        
+        <!-- Table to display notifications -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="notification in notifications" :key="notification.id">
+                    <td>{{ notification.id }}</td>
+                    <td>{{ notification.category }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
