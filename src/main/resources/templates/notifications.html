@@ -14,7 +14,7 @@
                 },
                 methods: {
                     fetchCategories() {
-                        fetch('http://192.168.1.102:8080/api/rss/categories')
+                        fetch('http://localhost:8080/api/rss/categories')
                             .then(response => response.json())
                             .then(data => {
                                 this.categories = data;
