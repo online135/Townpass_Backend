@@ -28,7 +28,7 @@ http://smsapi[.]mitake[.]com[.]tw
 我是用二站註冊的
  */
 
-
+// 三竹需要有統編後跟簡訊商開通才能夠串接 api 成功
 @Service
 public class SMSAppService {
 
@@ -51,7 +51,8 @@ public class SMSAppService {
 
           String encodedMessage = messageBuilder.toString();
           String encodedLink = TinyUrlShortener.shortenUrl(rssFeedResult.getLink());
-    
+          // String encodedLink = rssFeedResult.getLink();
+
           String body = encodedMessage + encodedLink;
 
 

@@ -135,6 +135,7 @@ public class RssFeedController {
                 whatsAppService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via whatsapp successfully", HttpStatus.OK);
 
+            // 三竹需要有統編後跟簡訊商開通才能夠串接 api 成功
             // sms, 要串台灣簡訊商 三竹 等才可以寄送(需再申請對應api, token 等)
             // https://www.twsms.com/
             // 三竹簡訊 https://msg.mitake.com.tw/SMS/Home.jsp?t=1725121253337

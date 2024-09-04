@@ -193,6 +193,7 @@ public class NotificationController {
             case "email":
                 return notification.getEmail();
             case "sms":
+            case "whatsapp":
                 return notification.getPhone();
             case "line":
                 return notification.getLineNotifyToken();
