@@ -32,13 +32,6 @@ http://smsapi[.]mitake[.]com[.]tw
 @Service
 public class SMSAppService {
 
-    @Value("${twilio.accountsid}")
-    private String ACCOUNT_SID;
-
-    @Value("${twilio.authtoken}")
-    private String AUTH_TOKEN;
-    
-
     public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {   
           StringBuilder messageBuilder = new StringBuilder();

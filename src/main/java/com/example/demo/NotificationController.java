@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,6 +23,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 // 台北旅遊網 open api 一覽表
@@ -35,7 +38,7 @@ public class NotificationController {
 	
     private RestTemplate restTemplate = new RestTemplate(); // 可以使用 Bean 來注入 RestTemplat
 
-    private List<Notification> noticeList = new ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
 
     String method = "mail"; // Here we consider only "mail" for now
 
@@ -44,7 +47,7 @@ public class NotificationController {
 
     public NotificationController() {
         // Sample data
-        noticeList.add(
+        notifications.add(
             new Notification(
                 1, 
                 "weather", 
@@ -58,7 +61,7 @@ public class NotificationController {
                 22,
                 true)
             );
-        noticeList.add(
+        notifications.add(
             new Notification(
                 2, 
                 "news", 
@@ -79,6 +82,7 @@ public class NotificationController {
     // 請參考 https://github.com/online135/hackathon_practice_spring_boot/blob/main/src/main/java/com/example/demo/DataController.java 去寫
 
     // (1) 列出全部資料 (list)
+    // List all notifications
 
     // (2) 列出單一資料 (by Id)
 
@@ -99,12 +103,12 @@ public class NotificationController {
 
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
-        return new ResponseEntity<>(noticeList, HttpStatus.OK);
+        return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Notification> getDataById(@PathVariable("id") int id) {
-        for (Notification item : noticeList) {
+        for (Notification item : notifications) {
             if (item.getId() == id) {
                 return new ResponseEntity<>(item, HttpStatus.OK);
             }
@@ -127,7 +131,7 @@ public class NotificationController {
         int currentHour = now.getHour();
         int currentMinute = now.getMinute();
 
-        for (Notification notification : noticeList) {
+        for (Notification notification : notifications) {
             System.out.println("====================================================");
             System.out.println("開始進行 "+ notification.getSubject() + " 執行與否判斷");
 
