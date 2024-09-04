@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 // 台北旅遊網 open api 一覽表
@@ -41,9 +38,6 @@ public class NotificationController {
     private List<Notification> notifications = new ArrayList<>();
 
     String method = "mail"; // Here we consider only "mail" for now
-
-    @Autowired
-    private HttpServletRequest request; // Autowire HttpServletRequest
 
     public NotificationController() {
         // Sample data
