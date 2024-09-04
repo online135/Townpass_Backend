@@ -11,14 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class WhatsAppService {
 
-    @Value("${twilio.accountsid}")
-    private String ACCOUNT_SID;
-
-    @Value("${twilio.authtoken}")
-    private String AUTH_TOKEN;
 
     public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {   
+          System.out.println("開始嘗試寄送 whatsapp");
+
           StringBuilder messageBuilder = new StringBuilder();
           messageBuilder.append("【")
                         // .append(rssFeedResult.getTitle())
@@ -33,6 +30,14 @@ public class WhatsAppService {
           String body = encodedMessage + encodedLink;
 
           // 初始化 Twilio
+
+          // https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn?frameUrl=%2Fconsole%2Fsms%2Fwhatsapp%2Flearn%3Fx-target-region%3Dus1
+          // In this step, you can start a business-initiated conversation with your users. 
+          // Business-initiated conversations required the use of pre-approved templates until the user responds. 
+          // Choose from one of our pre-approved templates to start a business-initiated conversation. 
+          // Once your customers reply, then you can send free form messages for the next 24 hours after your original message.
+          // 
+          // 因為 sms 是商業模式行為, 所以每次只開放24hr 測試，超過要再重溪 sync
           Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
           Message message = Message.creator(
             new com.twilio.type.PhoneNumber("whatsapp:+886937338506"), // to
@@ -40,6 +45,7 @@ public class WhatsAppService {
             body
           ).create();
           
+          System.out.println(message.getBody());
           System.out.println("Recipient Number: " + recipient);
           System.out.println("Send Result Success");
 
