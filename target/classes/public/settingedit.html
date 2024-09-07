@@ -94,7 +94,7 @@
 <script>
     //返回鍵設定
     document.getElementById('backButton').addEventListener('click', function() {
-        const subjectName = document.getElementById('subjectName').value.trim();
+        const subjectName = document.getElementById('subjectName').value;
         const time = document.getElementById('time').value;
         const mainCategory = document.getElementById('mainCategory').value;
         const subCategory = document.getElementById('subCategory').value;
@@ -128,6 +128,7 @@
     // Populate the dropdown with main categories
     function populateMainCategoryDropdown(categories) {
         const mainCategorySelect = document.getElementById('mainCategory');
+        mainCategorySelect.innerHTML = '<option value="">請選擇</option>'; // Clear existing options
         categories.forEach(category => {
             const option = document.createElement('option');
             option.value = category.code;
@@ -191,11 +192,27 @@
             axios.get(`/api/notifications/${notificationId}`)
                 .then(response => {
                     let notification = response.data;
+
+                    // 設置 mainCategory 的值，並確保在設置 subCategory 之前
+                    document.getElementById('mainCategory').value = notification.mainCategory;
+                    
+                    // 設置 subCategory 的值
+                    document.getElementById('subCategory').value = notification.subCategory;
+                    
+                    // 更新通知基本資料
                     document.getElementById('subjectName').value = notification.subjectName;
                     document.getElementById('time').value = `${notification.hour.toString().padStart(2, '0')}:${notification.minute.toString().padStart(2, '0')}`;
-                    document.getElementById('mainCategory').value = notification.mainCategory;
-                    document.getElementById('subCategory').value = notification.subCategory;
                     document.getElementById('noticeMethod').value = notification.noticeMethod;
+
+                    console.log(notification.mainCategory);
+
+                    // 設置主類別改變時，重新加載子類別
+                    if (notification.mainCategory) {
+                        fetchSubcategories(notification.mainCategory).then(() => {
+                            document.getElementById('mainCategory').value = notification.mainCategory;
+                            document.getElementById('subCategory').value = notification.subCategory;
+                        });
+                    }
 
                     console.log(notification.mainCategory);
                 })

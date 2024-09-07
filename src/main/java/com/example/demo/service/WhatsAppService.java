@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 public class WhatsAppService {
 
     // Find your Account Sid and Token at twilio.com/console
-    public static final String ACCOUNT_SID = "";
-    public static final String AUTH_TOKEN = "";
+    public static final String ACCOUNT_SID = "AC958505ac816c40a485b7c93d9d928312";
+    public static final String AUTH_TOKEN = "56463eaae1661076350d437499534473";
 
     public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {   
