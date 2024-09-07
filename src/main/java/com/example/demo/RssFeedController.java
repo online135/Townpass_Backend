@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.RssFeedResult;
@@ -148,11 +150,11 @@ public class RssFeedController {
     }
 
     // 寄送通知 api
-    @GetMapping("/send-subject/{subject}/{noticeMethod}/{recipient}")
+    @PostMapping("/send-subject/")
     public ResponseEntity<String> sendSubject(
-        @PathVariable("subject") String subject, 
-        @PathVariable("noticeMethod") String noticeMethod, 
-        @PathVariable("recipient") String recipient) {    
+        @RequestParam("subject") String subject, 
+        @RequestParam("noticeMethod") String noticeMethod, 
+        @RequestParam("recipient") String recipient) {   
 
         String rssUrl = getRssUri(subject);
         System.out.println(rssUrl);

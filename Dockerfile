@@ -1,6 +1,9 @@
 # Use a lighter base image to run the built application
 FROM eclipse-temurin:17-jre
 
+# Set the timezone environment variable
+ENV TZ=Asia/Taipei
+
 # Copy the built JAR file from the builder stage
 # COPY --from=builder /app/target/*.jar app.jar
 COPY target/*.jar app.jar

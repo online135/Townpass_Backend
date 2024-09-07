@@ -75,9 +75,9 @@
             <label for="noticeMethod">通知方式</label>
             <select id="noticeMethod">
                 <option></option>
-                <option value="Line">Line</option>
-                <option value="Email">Email</option>
-                <option value="WhatsApp" disabled>WhatsApp(已停用)</option>
+                <option value="line">Line</option>
+                <option value="email">Email</option>
+                <option value="whatsapp" disabled>WhatsApp</option>
                 <option value="簡訊" disabled>簡訊(已停用)</option>
             </select>
             <button class="test-button" id="testNotification">測試</button>
@@ -90,10 +90,8 @@
 </html>
 
 <script>
-
     //返回鍵設定
     document.getElementById('backButton').addEventListener('click', function() {
-        
         const subjectName = document.getElementById('subjectName').value.trim();
         const time = document.getElementById('time').value;
         const mainCategory = document.getElementById('mainCategory').value;
@@ -111,21 +109,19 @@
         }
     });
 
-
-
-        // Fetch categories from the backend
-        async function fetchCategories() {
-            try {
-                const response = await fetch('/api/rss/mainCategories'); // Update URL if needed
-                if (!response.ok) {
-                    throw new Error('Failed to fetch categories');
-                }
-                const categories = await response.json();
-                populateMainCategoryDropdown(categories);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
+    // Fetch categories from the backend
+    async function fetchCategories() {
+        try {
+            const response = await fetch('/api/rss/mainCategories'); // Update URL if needed
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
             }
+            const categories = await response.json();
+            populateMainCategoryDropdown(categories);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
         }
+    }
 
     // Populate the dropdown with main categories
     function populateMainCategoryDropdown(categories) {
@@ -193,11 +189,13 @@
             axios.get(`/api/notifications/${notificationId}`)
                 .then(response => {
                     let notification = response.data;
-                    document.getElementById('subjectName').value = notification.subjectName || '';
+                    document.getElementById('subjectName').value = notification.subjectName;
                     document.getElementById('time').value = `${notification.hour.toString().padStart(2, '0')}:${notification.minute.toString().padStart(2, '0')}`;
-                    document.getElementById('mainCategory').value = notification.mainCategory || '';
-                    document.getElementById('subCategory').value = notification.subCategory || '';
-                    document.getElementById('noticeMethod').value = notification.noticeMethod || '';
+                    document.getElementById('mainCategory').value = notification.mainCategory;
+                    document.getElementById('subCategory').value = notification.subCategory;
+                    document.getElementById('noticeMethod').value = notification.noticeMethod;
+
+                    console.log(notification.mainCategory);
                 })
                 .catch(error => {
                     console.error('獲取提醒資訊時出錯:', error);
@@ -261,23 +259,6 @@
             subCategory, 
             noticeMethod
         };
-
-
-        // try {
-        //     const response =  await axios.post('/api/notifications/', reminder, {
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     });
-
-        //     if (response.status === 201) { // Status 201 indicates resource created
-        //         window.location.href = 'index.html';
-        //     } else {
-        //         throw new Error('Failed to save reminder');
-        //     }
-        // } catch (error) {
-        //     console.error('Error:', error);
-        // }
         
         try {
             const response =  await axios.put(`/api/notifications/${notificationId}`, reminder)

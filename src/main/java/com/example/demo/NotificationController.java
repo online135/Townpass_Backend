@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,12 @@ import java.util.List;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
+    @Autowired
+    private RssFeedController rssFeedController;
+
     private RestTemplate restTemplate = new RestTemplate(); // 可以使用 Bean 來注入 RestTemplat
 
     private List<Notification> notifications = new ArrayList<>();
-
-    String method = "mail"; // Here we consider only "mail" for now
 
     public NotificationController() {
         // Sample data
@@ -46,8 +48,8 @@ public class NotificationController {
                 new Notification(
                         1,
                         "測試標題",
-                        "weather",
-                        "tycg",
+                        "TheNewest",
+                        "PeoplePost",
                         "line",
                         "b97b01067@gmail.com",
                         "0937338506",
@@ -61,15 +63,15 @@ public class NotificationController {
                 new Notification(
                         2,
                         "測試標題2",
-                        "news",
-                        "taipei", // subject
-                        "line",
+                        "Weather",
+                        "KeelungCity", // subject
+                        "email",
                         "b97b01067@g.ntu.edu.tw",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
-                        "7",
-                        4,
-                        7,
+                        "1,2,3,4,5,6,7",
+                        6,
+                        15,
                         true,
                         true));
 
@@ -197,20 +199,30 @@ public class NotificationController {
 
             // 檢查當前星期是否在通知的 weekday 列表中
             String currentWeekdayValue = String.valueOf(currentWeekday.getValue());
-            // 星期一為 1, 星期天為 7
+
+            // 星期天為 7
             if (!notificationWeekdayList.contains(currentWeekdayValue)) {
+                System.out.println("現在週的時間: " + currentWeekdayValue);
+                System.out.println("排程週的時間: " + notificationWeekdayList);
+
                 System.out.println("星期不對，跳過");
                 continue; // 如果星期不對，跳到下一個通知
             }
 
             // 檢查小時是否匹配
             if (notification.getHour() != currentHour) {
+                System.out.println("現在小時: " + currentHour);
+                System.out.println("排程小時: " + notification.getHour());
+
                 System.out.println("小時不對，跳過");
                 continue; // 如果小時不對，跳到下一個通知
             }
 
             // 檢查分鐘是否匹配
             if (notification.getMinute() != currentMinute) {
+                System.out.println("現在分鐘: " + currentMinute);
+                System.out.println("排程分鐘: " + notification.getMinute());
+
                 System.out.println("分鐘不對，跳過");
                 continue; // 如果分鐘不對，跳到下一個通知
             }
@@ -238,24 +250,23 @@ public class NotificationController {
     }
 
     private void performCrontabTask(Notification notification) {
-        // Define the relative path of the API endpoint with placeholders for path variables
-        String relativeUrl = "/api/rss/send-subject/{subject}/{noticeMethod}/{recipient}";
+        // 實作通知的執行邏輯
+        // String url = "https://216.239.32.53:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
+        // //String url = "http://localhost:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
 
-        // Extract values to be used as path variables
-        String subject = notification.getSubCategory();
-        String noticeMethod = notification.getNoticeMethod();
+
         String recipient = getRecipient(notification);
-    
+
+        // // 使用 URI Builder 構建完整 URL 和參數
+        // UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+        //         .queryParam("subject", notification.getSubCategory())
+        //         .queryParam("noticeMethod", notification.getNoticeMethod())
+        //         .queryParam("recipient", recipient);
+
         try {
-            // Use the RestTemplate to send a GET request, passing path variables
-            ResponseEntity<String> response = restTemplate.getForEntity(
-                    relativeUrl, 
-                    String.class, 
-                    subject, 
-                    noticeMethod, 
-                    recipient
-            );
-    
+            // 發送 POST 請求
+            ResponseEntity<String> response = rssFeedController.sendSubject(notification.getSubCategory(), notification.getNoticeMethod(), recipient);
+            // ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), null, String.class);
             System.out.println("通知發送成功: " + response.getBody());
         } catch (Exception e) {
             System.err.println("通知發送失敗: " + e.getMessage());
