@@ -48,6 +48,7 @@ public class NotificationController {
         notifications.add(
                 new Notification(
                         1,
+                        "測試標題",
                         "weather",
                         "tycg",
                         "line",
@@ -61,6 +62,7 @@ public class NotificationController {
         notifications.add(
                 new Notification(
                         2,
+                        "測試標題2",
                         "news",
                         "taipei", // subject
                         "email",
