@@ -44,7 +44,32 @@
         <p v-else>No notifications available.</p>
     </div>
 
-    <script type="module">
+    <script>
+        // Define the user object if not already defined in your Vue instance or globally
+        const user = { value: null }; // Adjust this based on your application's actual data structure
+
+        // Handle 'userinfo' message from Flutter
+        const handleUserInfo = (event) => {
+        try {
+            // Parse the event data assuming it's JSON formatted
+            const result = JSON.parse(event.data);
+
+            // Check if the result has the expected properties
+            if (result && result.data) {
+            // Update the user object with the received data
+            user.value = result.data;
+            console.log('Received User Info:', result.data); // Optional: Log the received data for debugging
+            } else {
+            console.error('Invalid data format:', result);
+            }
+        } catch (error) {
+            console.error('Error parsing event data:', error);
+        }
+        };
+
+        // Add the event listener to handle messages from Flutter
+        window.addEventListener('message', handleUserInfo);
+
         document.addEventListener('DOMContentLoaded', function() {
             new Vue({
                 el: '#app',
@@ -88,31 +113,6 @@
                 }
             });
         });
-
-
-        // 定义 flutterObject 对象
-        window.flutterObject = {
-            postMessage: function(message) {
-                console.log('Message sent to Flutter:', message);
-                // 在实际应用中，这里是与 Flutter 进行通信的地方
-            }
-        };
-
-        // 定义 useConnectionMessage 函数
-        function useConnectionMessage(data) {
-            const name = 'userinfo'; // 设定 name 为 userinfo
-            if (typeof flutterObject !== 'undefined' && flutterObject) {
-                const postInfo = JSON.stringify({ name, data });
-                flutterObject.postMessage(postInfo);
-            } else {
-                console.error('flutterObject is not defined.');
-            }
-        }
-
-        // 示例函数：在按钮点击时发送消息
-        function sendMessage() {
-            useConnectionMessage({ key: 'value', userName: 'John Doe' });
-        }
     </script>
 </body>
 </html>
