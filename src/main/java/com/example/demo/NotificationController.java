@@ -141,7 +141,7 @@ public class NotificationController {
 //     }
 
     // 排程任務，每分鐘檢查一次通知
-    // @Scheduled(cron = "0 * * * * *") // 每分鐘執行一次
+    @Scheduled(cron = "0 * * * * *") // 每分鐘執行一次
     public void checkNotifications() {
         // 取得當前時間並格式化
         LocalDateTime now = LocalDateTime.now();
