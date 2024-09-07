@@ -44,7 +44,7 @@
         <p v-else>No notifications available.</p>
     </div>
 
-    <script>
+    <script type="module">
         document.addEventListener('DOMContentLoaded', function() {
             new Vue({
                 el: '#app',
@@ -88,6 +88,31 @@
                 }
             });
         });
+
+
+        // 定义 flutterObject 对象
+        window.flutterObject = {
+            postMessage: function(message) {
+                console.log('Message sent to Flutter:', message);
+                // 在实际应用中，这里是与 Flutter 进行通信的地方
+            }
+        };
+
+        // 定义 useConnectionMessage 函数
+        function useConnectionMessage(data) {
+            const name = 'userinfo'; // 设定 name 为 userinfo
+            if (typeof flutterObject !== 'undefined' && flutterObject) {
+                const postInfo = JSON.stringify({ name, data });
+                flutterObject.postMessage(postInfo);
+            } else {
+                console.error('flutterObject is not defined.');
+            }
+        }
+
+        // 示例函数：在按钮点击时发送消息
+        function sendMessage() {
+            useConnectionMessage({ key: 'value', userName: 'John Doe' });
+        }
     </script>
 </body>
 </html>

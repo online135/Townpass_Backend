@@ -5,12 +5,14 @@ import com.example.demo.model.RssFeedResult;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WhatsAppService {
 
+    // Find your Account Sid and Token at twilio.com/console
+    public static final String ACCOUNT_SID = "";
+    public static final String AUTH_TOKEN = "";
 
     public void sendNotification(RssFeedResult rssFeedResult, String recipient) {  
       try {   

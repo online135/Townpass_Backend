@@ -1,0 +1,20 @@
+{
+  "hosting": {
+    "public": "resources/templates",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "spring-boot-app",
+          "region": "us-central1"
+        }
+      }
+    ]
+
+  }
+}
