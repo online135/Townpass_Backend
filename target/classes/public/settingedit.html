@@ -14,6 +14,10 @@
 
 <body>
     <div class="container">
+
+         <!-- 新增返回按鈕 -->
+         <button class="back-button" id="backButton">返回</button>
+
         <h1>設定提醒</h1>
 
         <!-- 標題輸入框 -->
@@ -78,7 +82,7 @@
                 <option></option>
                 <option value="Line">Line</option>
                 <option value="Email">Email</option>
-                <option value="WhatsApp">WhatsApp</option>
+                <option value="WhatsApp" disabled>WhatsApp(已停用)</option>
                 <option value="簡訊" disabled>簡訊(已停用)</option>
             </select>
             <button class="test-button" id="testNotification">測試</button>
@@ -92,6 +96,29 @@
 
 
 <script>
+
+    //返回鍵設定
+    document.getElementById('backButton').addEventListener('click', function() {
+        
+        const subjectName = document.getElementById('subjectName').value.trim();
+        const time = document.getElementById('time').value;
+        const mainCategory = document.getElementById('mainCategory').value;
+        const subCategory = document.getElementById('subCategory').value;
+        const noticeMethod = document.getElementById('noticeMethod').value;
+
+        // 檢查是否有已輸入的資料
+        if (subjectName || time || mainCategory || subCategory || noticeMethod) {
+            const confirmation = confirm('尚未保存資料，是否要放棄修改並返回？');
+            if (confirmation) {
+                window.history.back(); // 返回上一頁
+            }
+        } else {
+            window.history.back(); // 沒有輸入內容，直接返回上一頁
+        }
+    });
+
+
+
         // Fetch categories from the backend
         async function fetchCategories() {
             try {
