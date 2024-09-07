@@ -46,7 +46,7 @@
         <!-- 複選下拉選單（預設隱藏） -->
         <div class="repeat-container" id="repeatContainer" style="display: none;">
             <select class="repeat-select" id="dayOfWeek" multiple>
-                <option value="1,2,3,4,5,6,7">每天</option>
+                <option value="每天">每天</option>
                 <option value="1">週一</option>
                 <option value="2">週二</option>
                 <option value="3">週三</option>
@@ -196,10 +196,16 @@
 
         document.getElementById('dayOfWeek').addEventListener('change', function() {
             const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
-            
-            // 當選取 "每天" 時，自動選取所有選項
+
+            // 當選取 "每天" 時，自動選取所有選項，但跳過 "每天"
             if (selectedOptions.includes('每天')) {
-                Array.from(this.options).forEach(option => option.selected = true);
+                Array.from(this.options).forEach(option => {
+                    if (option.value !== '每天') { // Skip the "每天" option
+                        option.selected = true;
+                    } else {
+                        option.selected = false; // Ensure "每天" is not selected
+                    }
+                });
             }
         });
 
