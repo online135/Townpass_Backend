@@ -6,16 +6,17 @@
  */
 
 /**
+ * @param name - 傳送給 app 讓 app 知道 web 需要什麼類型的溝通
  * @param data - 需要傳送給 app 的資料
  *
- * <strong>重要提醒：</strong>建議都在 /views 呼叫此函數，為了方便跟 useHandleConnectionData 管理。
+ * <strong>重要提醒：</strong>建議都在 /views 呼叫此 hook，為了方便跟 useHandleConnectionData 管理。
  */
-function useConnectionMessage(data) {
-  const name = 'userinfo'; // 设定 name 为 userinfo
+export const useConnectionMessage = <T>(name: string, data: T) => {
+  // @ts-ignore
   if (typeof flutterObject !== 'undefined' && flutterObject) {
     const postInfo = JSON.stringify({ name, data });
+
+    // @ts-ignore
     flutterObject.postMessage(postInfo);
-  } else {
-    console.error('flutterObject is not defined.');
   }
-}
+};
