@@ -17,8 +17,8 @@
 
         <!-- 標題輸入框 -->
         <div class="form-group">
-            <label for="title">標題</label>
-            <input type="text" id="title" placeholder="輸入提醒標題">
+            <label for="subjectName">標題</label>
+            <input type="text" id="subjectName" placeholder="輸入提醒標題">
         </div>
 
         <!-- 時間選擇 -->
@@ -187,19 +187,19 @@
 
         // 儲存提醒
         document.getElementById('saveReminder').addEventListener('click', function() {
-            const title = document.getElementById('title').value.trim();
+            const subjectName = document.getElementById('subjectName').value.trim();
             const time = document.getElementById('time').value;
             const repeat = Array.from(document.getElementById('repeat').selectedOptions).map(opt => opt.value).join(', ');
             const mainCategory = document.getElementById('mainCategory').value;
             const subCategory = document.getElementById('subCategory').value;
             const notificationMethod = document.getElementById('notificationMethod').value;
 
-            if (!title || !time || !mainCategory || !subCategory || !notificationMethod ) {
+            if (!subjectName || !time || !mainCategory || !subCategory || !notificationMethod ) {
                 alert('請填寫完整。');
                 return;
             }
 
-            const reminder = { title, time, repeat, mainCategory, subCategory, notificationMethod };
+            const reminder = { subjectName, time, repeat, mainCategory, subCategory, notificationMethod };
             let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
             reminders.push(reminder);
             localStorage.setItem('reminders', JSON.stringify(reminders));
