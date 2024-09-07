@@ -6,6 +6,7 @@ body {
     padding: 0;
 }
 
+
  /* 返回鍵樣式 */
  .back-button {
     position: absolute;
@@ -13,7 +14,7 @@ body {
     left: 10px;
     padding: 10px 20px;
     background-color: inherit;
-    color: black;
+    color: #5AB4C5;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -23,7 +24,7 @@ body {
 /* 標題樣式 */
 h1 {
     text-align: center;
-    color: #333;
+    color: #5AB4C5;
 }
 
 .form-group input,
@@ -31,6 +32,7 @@ h1 {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+    border: 2px solid #5AB4C5;
 }
 
 /* 按鈕樣式 */
@@ -38,22 +40,37 @@ h1 {
 .test-button {
     width: 100%;
     padding: 10px;
-    color: white;
     border: none;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 10px;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .save-button {
-    background-color: #007bff;
+    background-color: #5AB4C5;
+    color: white;
 }
 
 .test-button {
-    margin-top: 10px;
-    background-color: #28a745;
+    margin-top: 20px;
+    border: 2px solid #5AB4C5;
+    background-color: #FFFFFF;
+    color: #5AB4C5;
 }
+
+
+
+/* 開關樣式 */
+.switch {
+    position: absolute;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 20px;
+}
+
 
 .slider {
     position: absolute;
@@ -67,18 +84,21 @@ h1 {
     border-radius: 34px; /* 圓角 */
 }
 
-/* 開關樣式 */
-.switch {
+.slider:before {
     position: absolute;
-    top: 50%;
-    right: 60px;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 20px;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%; /* 圓形切換按鈕 */
 }
 
+/* 當開關啟用時變藍色 */
 input:checked + .slider {
-    background-color: #007bff;
+    background-color: #5AB4C5;
 }
 
 /* 當開關啟用時，切換按鈕移動到右側 */
@@ -107,11 +127,11 @@ input:checked + .slider:before {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #007bff; /* 藍色背景 */
+    background-color: #5AB4C5;
     color: white; /* 文字白色 */
     border: none;
     padding: 15px;
-    border-radius: 50%; /* 圓形按鈕 */
+    border-radius: 30%;
     font-size: 24px;
     cursor: pointer;
 }
@@ -120,7 +140,11 @@ input:checked + .slider:before {
 .reminder-card {
     background-color: white; /* 背景白色 */
     padding: 15px;
-    border-radius: 5px; /* 圓角效果 */
+    top: 20px;
+    border-radius: 10px; /* 圓角效果 */
+    border: 2px solid #5AB4C5;
+    color: #5AB4C5;
+    font-weight: bold; /* 設定文字為粗體 */
     margin-bottom: 10px; /* 卡片之間的間距 */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 投影效果 */
     display: flex; /* 使用 flexbox 排版 */
@@ -128,6 +152,7 @@ input:checked + .slider:before {
     align-items: center; /* 垂直置中 */
     position: relative; /* 相對定位 */
     cursor: pointer; /* 設定滑鼠移過時的指標樣式 */
+    font-size: 18px;
 }
 
 /* 表單項目樣式 */
@@ -140,17 +165,7 @@ input:checked + .slider:before {
     display: block;
 }
 
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%; /* 圓形切換按鈕 */
-}
+
 
 /* Flexbox 設定，使文字與 Switch Button 同行排列 */
 .flex-row {
@@ -171,11 +186,6 @@ input:checked + .slider:before {
     background-color: white; /* 背景色 */
 }
 
-del {
-    text-decoration: line-through;
-    color:#333;
-}
-
 /* 樣式調整確保所有項目對齊 */
 label {
     font-size: 16px; /* 根據需求調整字體大小 */
@@ -194,6 +204,7 @@ label {
     background: none;
     cursor: pointer;
     font-size: 16px;
+    color: #5AB4C5;
 }
 
 /* 容器樣式 */

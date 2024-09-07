@@ -15,77 +15,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
     <style>
-        /* 設定網頁的基本樣式 */
-        body {
-            font-family: Arial, sans-serif; /* 使用 Arial 字體 */
-            background-color: #f4f4f4; /* 背景顏色 */
-            margin: 0;
-            padding: 0;
-        }
-
-        /* 設定容器樣式，讓內容居中顯示 */
-        .container {
-            width: 100%; /* 設定寬度為100% */
-            max-width: 600px; /* 設定最大寬度為600px */
-            margin: 0 auto; /* 讓容器自動居中 */
-            padding: 20px;
-            position: relative; /* 方便定位其他元素 */
-        }
-
-        /* 標題與按鈕的樣式 */
-        h1 {
-            text-align: center; /* 文字置中 */
-            color: #333; /* 標題文字顏色 */
-        }
-
-        /* 編輯按鈕的樣式 */
-        .edit-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* 提醒卡片樣式 */
-        .reminder-card {
-            background-color: white; /* 背景白色 */
-            padding: 15px;
-            border-radius: 5px; /* 圓角效果 */
-            margin-bottom: 10px; /* 卡片之間的間距 */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 投影效果 */
-            display: flex; /* 使用 flexbox 排版 */
-            justify-content: space-between; /* 兩邊元素對齊 */
-            align-items: center; /* 垂直置中 */
-            position: relative; /* 相對定位 */
-            cursor: pointer; /* 設定滑鼠移過時的指標樣式 */
-        }
-
-        /* 刪除按鈕的樣式 */
-        .delete-button {
-            display: none; /* 預設隱藏按鈕 */
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            background-color: #dc3545; /* 紅色背景 */
-            color: white; /* 文字白色 */
-            border: none;
-            padding: 5px;
-            border-radius: 50%; /* 圓形按鈕 */
-            font-size: 14px;
-            cursor: pointer;
-            transform: translateY(-50%); /* 垂直置中 */
-        }
-
-        /* 當處於編輯模式時顯示刪除按鈕 */
-        .reminder-card.editing .delete-button {
-            display: block;
-        }
-
         /* 開關樣式 */
         .switch {
             position: absolute;
@@ -122,26 +51,12 @@
 
         /* 當開關啟用時變藍色 */
         input:checked + .slider {
-            background-color: #007bff;
+            background-color: #5AB4C5;
         }
 
         /* 當開關啟用時，切換按鈕移動到右側 */
         input:checked + .slider:before {
             transform: translateX(20px);
-        }
-
-        /* 加號按鈕的樣式 */
-        .add-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #007bff; /* 藍色背景 */
-            color: white; /* 文字白色 */
-            border: none;
-            padding: 15px;
-            border-radius: 50%; /* 圓形按鈕 */
-            font-size: 24px;
-            cursor: pointer;
         }
     </style>
 </head>
