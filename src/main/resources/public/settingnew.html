@@ -69,8 +69,8 @@
 
         <!-- 通知方式選單 -->
         <div class="form-group">
-            <label for="notificationMethod">通知方式</label>
-            <select id="notificationMethod">
+            <label for="noticeMethod">通知方式</label>
+            <select id="noticeMethod">
                 <option></option>
                 <option value="Line">Line</option>
                 <option value="Email">Email</option>
@@ -177,7 +177,7 @@
 
         // 測試通知功能
         document.getElementById('testNotification').addEventListener('click', function() {
-            const method = document.getElementById('notificationMethod').value;
+            const method = document.getElementById('noticeMethod').value;
             if (method === '') {
                 alert('請選擇通知方式後再進行測試。');
             } else {
@@ -192,14 +192,14 @@
             const repeat = Array.from(document.getElementById('repeat').selectedOptions).map(opt => opt.value).join(', ');
             const mainCategory = document.getElementById('mainCategory').value;
             const subCategory = document.getElementById('subCategory').value;
-            const notificationMethod = document.getElementById('notificationMethod').value;
+            const noticeMethod = document.getElementById('noticeMethod').value;
 
-            if (!subjectName || !time || !mainCategory || !subCategory || !notificationMethod ) {
+            if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod ) {
                 alert('請填寫完整。');
                 return;
             }
 
-            const reminder = { subjectName, time, repeat, mainCategory, subCategory, notificationMethod };
+            const reminder = { subjectName, time, repeat, mainCategory, subCategory, noticeMethod };
             let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
             reminders.push(reminder);
             localStorage.setItem('reminders', JSON.stringify(reminders));

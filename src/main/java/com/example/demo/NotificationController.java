@@ -53,9 +53,9 @@ public class NotificationController {
                         "b97b01067@gmail.com",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
-                        "3,5",
-                        7,
-                        22,
+                        "3,5,6",
+                        23,
+                        35,
                         true));
         notifications.add(
                 new Notification(

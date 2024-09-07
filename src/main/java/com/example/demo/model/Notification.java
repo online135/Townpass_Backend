@@ -6,9 +6,9 @@ public class Notification {
     private String mainCategory;
     private String subCategory;
     private String noticeMethod;
-    private String email;
-    private String phone;
-    private String lineNotifyToken;
+    private String email = "b97b01067@gmail.com";
+    private String phone = "0937338506";
+    private String lineNotifyToken = "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG";
     private String dayOfWeek;
     private int hour;
     private int minute;

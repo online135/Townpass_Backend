@@ -73,8 +73,8 @@
 
         <!-- 通知方式選單 -->
         <div class="form-group">
-            <label for="notificationMethod">通知方式</label>
-            <select id="notificationMethod">
+            <label for="noticeMethod">通知方式</label>
+            <select id="noticeMethod">
                 <option></option>
                 <option value="Line">Line</option>
                 <option value="Email">Email</option>
@@ -127,7 +127,7 @@
     }
 
     document.getElementById('testNotification').addEventListener('click', function() {
-        const method = document.getElementById('notificationMethod').value;
+        const method = document.getElementById('noticeMethod').value;
         if (method === '') {
             alert('請選擇通知方式後再進行測試。');
         } else {
@@ -140,9 +140,9 @@
         const time = document.getElementById('time').value;
         const mainCategory = document.getElementById('mainCategory').value;
         const subCategory = document.getElementById('subCategory').value;
-        const notificationMethod = document.getElementById('notificationMethod').value;
+        const noticeMethod = document.getElementById('noticeMethod').value;
 
-        if (!subjectName || !time || !mainCategory || !subCategory || !notificationMethod) {
+        if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod) {
             alert('請填寫所有欄位。');
             return;
         }
@@ -153,9 +153,9 @@
             subjectName: subjectName,
             hour: parseInt(time.split(':')[0]),
             minute: parseInt(time.split(':')[1]),
-            subject: mainCategory,
-            type: subCategory,
-            noticeMethod: notificationMethod
+            mainCategory: mainCategory,
+            subCategory: subCategory,
+            noticeMethod: noticeMethod
         };
 
         axios.put(`/api/notifications/${notificationId}`, updatedNotification)
@@ -177,9 +177,9 @@
                     let notification = response.data;
                     document.getElementById('subjectName').value = notification.subjectName || '';
                     document.getElementById('time').value = `${notification.hour.toString().padStart(2, '0')}:${notification.minute.toString().padStart(2, '0')}`;
-                    document.getElementById('mainCategory').value = notification.subject || '';
-                    document.getElementById('subCategory').value = notification.type || '';
-                    document.getElementById('notificationMethod').value = notification.noticeMethod || '';
+                    document.getElementById('mainCategory').value = notification.mainCategory || '';
+                    document.getElementById('subCategory').value = notification.subCategory || '';
+                    document.getElementById('noticeMethod').value = notification.noticeMethod || '';
                 })
                 .catch(error => {
                     console.error('獲取提醒資訊時出錯:', error);

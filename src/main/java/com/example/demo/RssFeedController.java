@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.RssFeedResult;
-import com.example.demo.model.Subject;
-import com.example.demo.model.SubjectCategory;
+import com.example.demo.model.SubCategory;
+import com.example.demo.model.MainCategory;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
@@ -43,55 +43,55 @@ public class RssFeedController {
     @Autowired
     private LineNotifyService lineNotifyService;
 
-    private List<SubjectCategory> categories;  // List of all main categories
+    private List<MainCategory> mainCategories;  // List of all main categories
 
     public RssFeedController() {
-        categories = new ArrayList<>();
+        mainCategories = new ArrayList<>();
 
         // Example of adding a main category with its respective subjects
-        SubjectCategory localNews = new SubjectCategory("local_news", "地方新聞");
-        localNews.addSubject("taipei", "台北市", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
-        localNews.addSubject("taichung", "台中市", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
-        localNews.addSubject("tycg", "桃園市", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
+        MainCategory localNews = new MainCategory("local_news", "地方新聞");
+        localNews.addSubCategory("taipei", "台北市", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
+        localNews.addSubCategory("taichung", "台中市", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        localNews.addSubCategory("tycg", "桃園市", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
         // Add the main category to the list
-        categories.add(localNews);
+        mainCategories.add(localNews);
 
         // You can add more main categories similarly
-        SubjectCategory otherCategory = new SubjectCategory("other_news", "其他分類");
-        otherCategory.addSubject("other", "其他新聞", "https://example.com/rss");
-        categories.add(otherCategory);
+        MainCategory otherCategory = new MainCategory("other_news", "其他分類");
+        otherCategory.addSubCategory("other", "其他新聞", "https://example.com/rss");
+        mainCategories.add(otherCategory);
     }
 
     // API endpoint to get all categories
     // Method to retrieve categories, 取得大分類列表
-    @GetMapping("/categories")
-    public List<SubjectCategory> getCategories() {
-        return categories;
+    @GetMapping("/mainCategories")
+    public List<MainCategory> getMainCategories() {
+        return mainCategories;
     }
 
     // API endpoint to get subjects by category code
     // Method to retrieve subjects, 丟入大分類的 String code, 取得小分類
-    @GetMapping("/categories/{category}/")
-    public SubjectCategory getSubjectsByCategory(
-        @PathVariable String category
+    @GetMapping("/mainCategories/{subCategory}/")
+    public MainCategory getSubjectsByCategory(
+        @PathVariable String subCategory
     ) {
-        for (SubjectCategory subjectCategory : categories) {
-            if (subjectCategory.getCode().equals(category)) {
-                return subjectCategory;
+        for (MainCategory mainCategory : mainCategories) {
+            if (mainCategory.getCode().equals(subCategory)) {
+                return mainCategory;
             }
         }
         return null;
     }
 
-    private String getRssUri(String subject) {
-        for (SubjectCategory category : categories) {
-            for (Subject subj : category.getSubjects()) {
-                if (subj.getCode().equalsIgnoreCase(subject)) {
-                    return subj.getRssUri();
+    private String getRssUri(String inputSubCategory) {
+        for (MainCategory mainCategory : mainCategories) {
+            for (SubCategory subCategory : mainCategory.getSubCategories()) {
+                if (subCategory.getCode().equalsIgnoreCase(inputSubCategory)) {
+                    return subCategory.getRssUri();
                 }
             }
         }
-        return "Subject not found"; // Handle cases where the subject does not exist
+        return "SubCategory not found"; // Handle cases where the subject does not exist
     }
 
     // 寄送通知 api
