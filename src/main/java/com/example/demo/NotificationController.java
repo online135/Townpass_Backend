@@ -72,19 +72,57 @@ public class NotificationController {
 
     }
 
-    // 請 品橋 在 以下 範圍完成 CRUD 的 web api 開發, 針對 Notification 這份資料 (上面的), 然後測試時可以用 postman 去呼叫可以操作資料 restful api
-    // 請參考 https://github.com/online135/hackathon_practice_spring_boot/blob/main/src/main/java/com/example/demo/DataController.java 去寫
-
-    // (1) 列出全部資料 (list)
-    // List all notifications
+    @GetMapping
+    public ResponseEntity<List<Notification>> getAllNotifications() {
+        return new ResponseEntity<>(noticeList, HttpStatus.OK);
+    }
 
     // (2) 列出單一資料 (by Id)
+    @GetMapping("/{id}")
+    public ResponseEntity<Notification> getNotificationById(@PathVariable("id") int id) {
+        for (Notification notification : noticeList) {
+            if (notification.getId() == id) {
+                return new ResponseEntity<>(notification, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     // (3) 新增資料 post
+    @PostMapping
+    public ResponseEntity<Notification> addNotification(@RequestBody Notification notification) {
+        notification.setId(idCounter++);
+        noticeList.add(notification);
+        return new ResponseEntity<>(notification, HttpStatus.CREATED);
+    }
 
     // (4) 更新資料 put
+    @PutMapping("/{update}")
+    public ResponseEntity<Notification> updateNotification(@PathVariable("id") int id, @RequestBody Notification updatedNotification) {
+        for (int i = 0; i < noticeList.size(); i++) {
+            if (noticeList.get(i).getId() == id) {
+                updatedNotification.setId(id);
+                noticeList.set(i, updatedNotification);
+                return new ResponseEntity<>(updatedNotification, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
     // (5) 刪除資料 delete
+<<<<<<< HEAD
+    @DeleteMapping("/{delete}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable("id") int id) {
+        for (Notification notification : noticeList) {
+            if (notification.getId() == id) {
+                noticeList.remove(notification);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+//
+=======
 
     // 請 品橋 在 以上 範圍完成 CRUD 的 web api 開發, 針對 Notification 這份資料 (上面的), 然後測試時可以用 postman 去呼叫可以操作資料
 
@@ -95,6 +133,7 @@ public class NotificationController {
 
     // (2) 更新資料端口 2  => 切換這個 排程 status 開關 (暫時不使用)
 
+>>>>>>> 54633556e7ababd6a851ffc8b7971412760cbb24
     @GetMapping
     public ResponseEntity<List<Notification>> getNotifications() {
         return new ResponseEntity<>(notifications, HttpStatus.OK);
