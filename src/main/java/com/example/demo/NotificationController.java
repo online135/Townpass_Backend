@@ -103,6 +103,10 @@ public class NotificationController {
         notification.setId(nextId);
         // notification.setStatus("UNPROCESSED");未處理
 
+        notification.setEmail("b97b01067@g.ntu.edu.tw");
+        notification.setPhone("0937338506");
+        notification.setLineNotifyToken("ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG");
+
         notifications.add(notification);
 
         return new ResponseEntity<>(notification, HttpStatus.CREATED);

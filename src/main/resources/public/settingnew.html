@@ -26,7 +26,7 @@
         <!-- 時間選擇 -->
         <div class="form-group">
             <label for="time">時間</label>
-            <input type="time" id="time" value="${new Date().toTimeString().substr(0, 5)}">
+            <input type="time" id="time" value="${new Date().toISOString().substr(11, 5)}">
         </div>
 
         <!-- 重複選單 -->
@@ -40,15 +40,15 @@
 
         <!-- 複選下拉選單（預設隱藏） -->
         <div class="repeat-container" id="repeatContainer" style="display: none;">
-            <select class="repeat-select" id="repeat" multiple>
-                <option value="每天">每天</option>
-                <option value="週一">週一</option>
-                <option value="週二">週二</option>
-                <option value="週三">週三</option>
-                <option value="週四">週四</option>
-                <option value="週五">週五</option>
-                <option value="週六">週六</option>                    
-                <option value="週日">週日</option>
+            <select class="repeat-select" id="dayOfWeek" multiple>
+                <option value="1,2,3,4,5,6,7">每天</option>
+                <option value="1">週一</option>
+                <option value="2">週二</option>
+                <option value="3">週三</option>
+                <option value="4">週四</option>
+                <option value="5">週五</option>
+                <option value="6">週六</option>                    
+                <option value="7">週日</option>
             </select>
         </div>
 
@@ -168,7 +168,7 @@
             repeatContainer.style.display = this.checked ? 'block' : 'none';
         });
 
-        document.getElementById('repeat').addEventListener('change', function() {
+        document.getElementById('dayOfWeek').addEventListener('change', function() {
             const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
             
             // 當選取 "每天" 時，自動選取所有選項
@@ -191,10 +191,11 @@
         document.getElementById('saveReminder').addEventListener('click', function() {
             const subjectName = document.getElementById('subjectName').value.trim();
             const time = document.getElementById('time').value;
-            const repeat = Array.from(document.getElementById('repeat').selectedOptions).map(opt => opt.value).join(', ');
+            const dayOfWeek = Array.from(document.getElementById('dayOfWeek').selectedOptions).map(opt => opt.value).join(', ');
             const mainCategory = document.getElementById('mainCategory').value;
             const subCategory = document.getElementById('subCategory').value;
             const noticeMethod = document.getElementById('noticeMethod').value;
+            const isActive = true;
 
             if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod ) {
                 alert('請填寫完整。');
@@ -208,10 +209,11 @@
                 subjectName, 
                 hour, 
                 minute, 
-                repeat, 
+                dayOfWeek, 
                 mainCategory, 
                 subCategory, 
-                noticeMethod 
+                noticeMethod,
+                isActive
             };
 
             let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
@@ -233,10 +235,6 @@
                 alert('儲存提醒時發生錯誤。');
             }
         });
-        var select = document.getElementById("簡訊");
-        var optionToDisable = select.option[4];
-        optionToDisable.disabled=true;
-
     </script>
 </body>
 </html>

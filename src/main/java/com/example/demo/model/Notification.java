@@ -12,7 +12,7 @@ public class Notification {
     private String dayOfWeek;
     private int hour;
     private int minute;
-    private boolean isActive;
+    private boolean isActive = true;
 
     public Notification(
         int id, 
