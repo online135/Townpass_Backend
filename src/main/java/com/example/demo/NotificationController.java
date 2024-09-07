@@ -17,8 +17,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.model.Notification;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,7 +51,7 @@ public class NotificationController {
                         "b97b01067@gmail.com",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
-                        "3,5,6",
+                        "1,2,3,4,5",
                         23,
                         35,
                         true));

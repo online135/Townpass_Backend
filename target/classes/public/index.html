@@ -174,19 +174,30 @@
                 reminders.forEach((reminder, index) => {
                     const reminderCard = document.createElement('div'); // 建立提醒卡片元素
                     reminderCard.className = 'reminder-card'; // 設定卡片的樣式類別
+
+                    // 將小時和分鐘格式化為上午/下午的格式
+                    const hour = parseInt(reminder.hour, 10); // 確保 hour 是數字
+                    const minute = reminder.minute.toString().padStart(2, '0'); // 確保分鐘總是兩位數
+                    const period = hour >= 12 ? '下午' : '上午'; // 判斷是上午還是下午
+                    const formattedHour = hour % 12 === 0 ? 12 : hour % 12; // 12小時制轉換，12小時不變，其他則取餘數
+
+                    // 格式化 dayOfWeek 為顯示格式
+                    const dayOfWeekDisplay = formatDayOfWeek(reminder.dayOfWeek);
+
                     reminderCard.innerHTML = `
                         <div class="reminder-text">
                             <strong>${reminder.subjectName}</strong><br>
-                            ${reminder.time} - ${reminder.repeat}<br>
-                            通知方式: ${reminder.notificationMethod}
+                            ${period} ${formattedHour}:${minute} &nbsp&nbsp ${dayOfWeekDisplay}<br>
+                            通知方式: ${reminder.noticeMethod}
                         </div>
                         <button class="delete-button" onclick="deleteReminder(${reminder.id}, event)">×</button>
 
                         <label class="switch">
-                            <input type="checkbox" checked=${reminder.isActive == true ? 'checked' : ''} onchange="toggleSwitch(${reminder.id}, this.checked)">
+                            <input type="checkbox" ${reminder.isActive ? 'checked' : ''} onchange="toggleSwitch(${reminder.id}, this.checked)">
                             <span class="slider round"></span>
                         </label>
                     `;
+
 
                     reminderCard.onclick = function(event) {
                         // 檢查點擊的目標是否是開關按鈕或刪除按鈕
@@ -221,6 +232,7 @@
                 card.classList.toggle('editing', isEditMode); // 切換每張卡片的樣式
             });
         }
+        
 
         // 刪除提醒功能
         function deleteReminder(id, event) {
@@ -251,6 +263,26 @@
 
             // 開關狀態改變後關閉編輯模式
             // 不關閉編輯模式
+        }
+
+        // 定義週的名稱對應
+        const weekDayNames = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+
+        // 將 dayOfWeek 的字串轉換為可讀顯示的文字
+        function formatDayOfWeek(dayOfWeek) {
+            // 如果 dayOfWeek 包含所有平日（1,2,3,4,5），顯示「每個平日」
+            if (dayOfWeek === '1,2,3,4,5') {
+                return '每個平日';
+            } 
+            // 如果 dayOfWeek 包含所有星期（0,1,2,3,4,5,6），顯示「每日」
+            else if (dayOfWeek === '0,1,2,3,4,5,6') {
+                return '每日';
+            } 
+            // 將 dayOfWeek 字串拆分為數字陣列，並轉換為對應的週名稱
+            else {
+                const days = dayOfWeek.split(',').map(day => weekDayNames[parseInt(day, 10)]);
+                return days.join('、'); // 以逗號分隔顯示
+            }
         }
     </script>
 </body>
