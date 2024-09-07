@@ -243,17 +243,17 @@ label {
         
         // 顯示或隱藏複選下拉選單
         document.getElementById('repeatSwitch').addEventListener('change', function() {
-    const repeatContainer = document.getElementById('repeatContainer');
-    repeatContainer.style.display = this.checked ? 'block' : 'none';
-});
+            const repeatContainer = document.getElementById('repeatContainer');
+            repeatContainer.style.display = this.checked ? 'block' : 'none';
+        });
 
-// 當選取 "每天" 時，自動選取所有選項
-document.getElementById('repeat').addEventListener('change', function() {
-    const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
-    if (selectedOptions.includes('每天')) {
-        Array.from(this.options).forEach(option => option.selected = true);
-    }
-});
+        // 當選取 "每天" 時，自動選取所有選項
+        document.getElementById('repeat').addEventListener('change', function() {
+            const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+            if (selectedOptions.includes('每天')) {
+                Array.from(this.options).forEach(option => option.selected = true);
+            }
+        });
 
         // 測試通知功能
         document.getElementById('testNotification').addEventListener('click', function() {
@@ -267,59 +267,59 @@ document.getElementById('repeat').addEventListener('change', function() {
 
         // 當用戶點擊保存按鈕時
         document.getElementById('saveReminder').addEventListener('click', function() {
-    const title = document.getElementById('title').value.trim();
-    const time = document.getElementById('time').value;
-    const repeat = Array.from(document.getElementById('repeat').selectedOptions).map(opt => opt.value).join(', ');
-    const mainCategory = document.getElementById('mainCategory').value;
-    const subCategory = document.getElementById('subCategory').value;
-    const notificationMethod = document.getElementById('notificationMethod').value;
+        const title = document.getElementById('title').value.trim();
+        const time = document.getElementById('time').value;
+        const repeat = Array.from(document.getElementById('repeat').selectedOptions).map(opt => opt.value).join(', ');
+        const mainCategory = document.getElementById('mainCategory').value;
+        const subCategory = document.getElementById('subCategory').value;
+        const notificationMethod = document.getElementById('notificationMethod').value;
 
-    // 確保所有欄位都有填寫
-    if (!title || !time || !mainCategory || !subCategory || !notificationMethod) {
-        alert('請填寫所有欄位。');
-        return;
-    }
+        // 確保所有欄位都有填寫
+        if (!title || !time || !mainCategory || !subCategory || !notificationMethod) {
+            alert('請填寫所有欄位。');
+            return;
+        }
 
-    // 從本地存儲中讀取提醒列表
-    let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-    const originalReminderTitle = localStorage.getItem('editingReminderTitle');
+        // 從本地存儲中讀取提醒列表
+        let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+        const originalReminderTitle = localStorage.getItem('editingReminderTitle');
 
-    // 確認提醒是否已存在
-    const existingReminderIndex = reminders.findIndex(r => r.title === originalReminderTitle);
+        // 確認提醒是否已存在
+        const existingReminderIndex = reminders.findIndex(r => r.title === originalReminderTitle);
 
-    // 確保所有欄位都有值，如果某個欄位無更動則使用原值
-    const updatedReminder = {
-        title: title || reminders[existingReminderIndex].title,
-        time: time || reminders[existingReminderIndex].time,
-        repeat: repeat || reminders[existingReminderIndex].repeat,
-        mainCategory: mainCategory || reminders[existingReminderIndex].mainCategory,
-        subCategory: subCategory || reminders[existingReminderIndex].subCategory,
-        notificationMethod: notificationMethod || reminders[existingReminderIndex].notificationMethod
-    };
+        // 確保所有欄位都有值，如果某個欄位無更動則使用原值
+        const updatedReminder = {
+            title: title || reminders[existingReminderIndex].title,
+            time: time || reminders[existingReminderIndex].time,
+            repeat: repeat || reminders[existingReminderIndex].repeat,
+            mainCategory: mainCategory || reminders[existingReminderIndex].mainCategory,
+            subCategory: subCategory || reminders[existingReminderIndex].subCategory,
+            notificationMethod: notificationMethod || reminders[existingReminderIndex].notificationMethod
+        };
 
-    // 更新原有提醒
-    reminders[existingReminderIndex] = updatedReminder;
+        // 更新原有提醒
+        reminders[existingReminderIndex] = updatedReminder;
 
-    // 更新本地存儲中的提醒列表
-    localStorage.setItem('reminders', JSON.stringify(reminders));
+        // 更新本地存儲中的提醒列表
+        localStorage.setItem('reminders', JSON.stringify(reminders));
 
-    alert('提醒已更新！');
-    window.location.href = 'index.html';  // 返回主頁
-});
+        alert('提醒已更新！');
+        window.location.href = 'index.html';  // 返回主頁
+    });
 
-// 加載正在編輯的提醒
-document.addEventListener('DOMContentLoaded', function() {
-    const editingReminder = JSON.parse(localStorage.getItem('editingReminder'));
-    if (editingReminder) {
-        document.getElementById('title').value = editingReminder.title;
-        document.getElementById('time').value = editingReminder.time;
-        // 設置重複模式和其他資料
-        document.getElementById('mainCategory').value = editingReminder.mainCategory;
-        document.getElementById('subCategory').value = editingReminder.subCategory;
-        document.getElementById('notificationMethod').value = editingReminder.notificationMethod;
-        localStorage.setItem('editingReminderTitle', editingReminder.title);  // 儲存編輯提醒的標題
-    }
-});
+    // 加載正在編輯的提醒
+    document.addEventListener('DOMContentLoaded', function() {
+        const editingReminder = JSON.parse(localStorage.getItem('editingReminder'));
+        if (editingReminder) {
+            document.getElementById('title').value = editingReminder.title;
+            document.getElementById('time').value = editingReminder.time;
+            // 設置重複模式和其他資料
+            document.getElementById('mainCategory').value = editingReminder.mainCategory;
+            document.getElementById('subCategory').value = editingReminder.subCategory;
+            document.getElementById('notificationMethod').value = editingReminder.notificationMethod;
+            localStorage.setItem('editingReminderTitle', editingReminder.title);  // 儲存編輯提醒的標題
+        }
+    });
 
         var select = document.getElementById("簡訊");
         var optionToDisable = select.option[4];
