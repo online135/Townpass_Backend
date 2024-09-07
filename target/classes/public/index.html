@@ -198,7 +198,7 @@
                             localStorage.setItem('editingReminder', JSON.stringify(reminder)); // 保存要編輯的提醒內容
                             localStorage.setItem('editingReminderIndex', index); // 保存提醒的索引
                             const reminderId = reminder.id; // 获取提醒的 ID
-                            const url = `http://localhost:8080/settingedit.html?id=${reminderId}`;
+                            const url = `/settingedit.html?id=${reminderId}`;
                             window.location.href = url;
 
                             // 執行操作後關閉編輯模式
