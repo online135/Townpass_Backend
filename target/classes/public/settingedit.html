@@ -95,7 +95,7 @@
         // Fetch categories from the backend
         async function fetchCategories() {
             try {
-                const response = await fetch('http://localhost:8080/api/rss/categories'); // Update URL if needed
+                const response = await fetch('http://localhost:8080/api/rss/mainCategories'); // Update URL if needed
                 if (!response.ok) {
                     throw new Error('Failed to fetch categories');
                 }

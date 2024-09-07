@@ -88,7 +88,7 @@
         // Fetch categories from the backend
         async function fetchCategories() {
             try {
-                const response = await fetch('http://localhost:8080/api/rss/categories'); // Update URL if needed
+                const response = await fetch('http://localhost:8080/api/rss/mainCategories'); // Update URL if needed
                 if (!response.ok) {
                     throw new Error('Failed to fetch categories');
                 }
@@ -127,25 +127,25 @@
         // Fetch subcategories for the selected main category
         async function fetchSubcategories(categoryCode) {
             try {
-                const response = await fetch(`http://localhost:8080/api/rss/categories/${categoryCode}/`);
+                const response = await fetch(`http://localhost:8080/api/rss/mainCategories/${categoryCode}/`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch subcategories');
                 }
-                const category = await response.json();
-                populateSubCategoryDropdown(category.subjects); // Populate the subcategory dropdown
+                const mainCategory = await response.json();
+                populateSubCategoryDropdown(mainCategory.subCategories); // Populate the subcategory dropdown
             } catch (error) {
                 console.error('Error fetching subcategories:', error);
             }
         }
 
         // Populate the subcategory dropdown
-        function populateSubCategoryDropdown(subjects) {
+        function populateSubCategoryDropdown(subCategories) {
             const subCategorySelect = document.getElementById('subCategory');
             clearSubCategoryDropdown(); // Clear previous options
-            subjects.forEach(subject => {
+            subCategories.forEach(subCategory => {
                 const option = document.createElement('option');
-                option.value = subject.code; // Use the subject code as the value
-                option.textContent = subject.displayName; // Use the display name as the label
+                option.value = subCategory.code; // Use the subject code as the value
+                option.textContent = subCategory.displayName; // Use the display name as the label
                 subCategorySelect.appendChild(option);
             });
         }
