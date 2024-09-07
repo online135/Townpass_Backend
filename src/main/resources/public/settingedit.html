@@ -86,10 +86,7 @@
         <div class="form-group">
             <label for="mainCategory">主類別</label>
             <select id="mainCategory">
-                <option></option>
-                <option value="工作">工作</option>
-                <option value="個人">個人</option>
-                <option value="其他">其他</option>
+                <option value="">請選擇</option>
             </select>
         </div>
 
@@ -126,6 +123,34 @@
 
 
     <script>
+        // Fetch categories from the backend
+        async function fetchCategories() {
+            try {
+                const response = await fetch('http://localhost:8080/api/rss/categories'); // Update URL if needed
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                const categories = await response.json();
+                populateMainCategoryDropdown(categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        // Populate the dropdown with main categories
+        function populateMainCategoryDropdown(categories) {
+            const mainCategorySelect = document.getElementById('mainCategory');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.code; // Using 'code' as value (adjust if necessary)
+                option.textContent = category.displayName; // Using 'displayName' as the label
+                mainCategorySelect.appendChild(option);
+            });
+        }
+
+        // Call the function to fetch and populate categories on page load
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+
         // 从 URL 中获取 id 参数
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);

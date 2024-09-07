@@ -94,10 +94,7 @@
         <div class="form-group">
             <label for="mainCategory">主類別</label>
             <select id="mainCategory">
-                <option></option>
-                <option value="工作">工作</option>
-                <option value="個人">個人</option>
-                <option value="其他">其他</option>
+                <option value="">請選擇</option>
             </select>
         </div>
 
@@ -131,22 +128,49 @@
     </div>
 
     <script>
-        
-        document.getElementById('repeatSwitch').addEventListener('change', function() {
-    const repeatContainer = document.getElementById('repeatContainer');
-    
-    // 顯示或隱藏複選下拉選單
-    repeatContainer.style.display = this.checked ? 'block' : 'none';
-});
+        // Fetch categories from the backend
+        async function fetchCategories() {
+            try {
+                const response = await fetch('http://localhost:8080/api/rss/categories'); // Update URL if needed
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                const categories = await response.json();
+                populateMainCategoryDropdown(categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
 
-document.getElementById('repeat').addEventListener('change', function() {
-    const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
-    
-    // 當選取 "每天" 時，自動選取所有選項
-    if (selectedOptions.includes('每天')) {
-        Array.from(this.options).forEach(option => option.selected = true);
-    }
-});
+        // Populate the dropdown with main categories
+        function populateMainCategoryDropdown(categories) {
+            const mainCategorySelect = document.getElementById('mainCategory');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.code; // Using 'code' as value (adjust if necessary)
+                option.textContent = category.displayName; // Using 'displayName' as the label
+                mainCategorySelect.appendChild(option);
+            });
+        }
+
+        // Call the function to fetch and populate categories on page load
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+
+        document.getElementById('repeatSwitch').addEventListener('change', function() {
+            const repeatContainer = document.getElementById('repeatContainer');
+            
+            // 顯示或隱藏複選下拉選單
+            repeatContainer.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('repeat').addEventListener('change', function() {
+            const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+            
+            // 當選取 "每天" 時，自動選取所有選項
+            if (selectedOptions.includes('每天')) {
+                Array.from(this.options).forEach(option => option.selected = true);
+            }
+        });
 
         // 測試通知功能
         document.getElementById('testNotification').addEventListener('click', function() {
