@@ -79,7 +79,7 @@
                 <option></option>
                 <option value="line">Line</option>
                 <option value="email">Email</option>
-                <option value="whatsapp" disabled>WhatsApp</option>
+                <option value="whatsapp">WhatsApp</option>
                 <option value="簡訊" disabled>簡訊(已停用)</option>
             </select>
             <button class="test-button" id="testNotification">測試</button>
@@ -92,6 +92,8 @@
 </html>
 
 <script>
+    const notificationId = getQueryParam('id');
+
     //返回鍵設定
     document.getElementById('backButton').addEventListener('click', function() {
         const subjectName = document.getElementById('subjectName').value;
@@ -187,7 +189,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         fetchCategories();
         
-        const notificationId = getQueryParam('id');
         if (notificationId) {
             axios.get(`/api/notifications/${notificationId}`)
                 .then(response => {
@@ -227,15 +228,6 @@
         return urlParams.get(param);
     }
 
-    document.getElementById('testNotification').addEventListener('click', function() {
-        const method = document.getElementById('noticeMethod').value;
-        if (method === '') {
-            alert('請選擇通知方式後再進行測試。');
-        } else {
-            alert('測試通知已發送到 ' + method);
-        }
-    });
-
     document.getElementById('repeatSwitch').addEventListener('change', function() {
         const repeatContainer = document.getElementById('repeatContainer');
         repeatContainer.style.display = this.checked ? 'block' : 'none';
@@ -251,7 +243,27 @@
     });
 
     //更新
-    document.getElementById('saveReminder').addEventListener('click', async function() {
+    document.getElementById('saveReminder').addEventListener('click', function() {
+        saveReminder();
+        window.location.href = 'index.html';
+
+    });
+
+    // 測試通知功能
+    document.getElementById('testNotification').addEventListener('click', function() {
+        const method = document.getElementById('noticeMethod').value;
+        if (method === '') {
+            alert('請選擇通知方式後再進行測試。');
+        } else {
+            // 先儲存
+            saveReminder()
+            
+            // 再執行測試 Execute the backend operation after confirming the notification method
+            directExecute(notificationId);
+        }
+    });
+
+    function saveReminder() {
         const subjectName = document.getElementById('subjectName').value;
         const time = document.getElementById('time').value;
         const dayOfWeek = Array.from(document.getElementById('dayOfWeek').selectedOptions).map(opt => opt.value).join(', ');
@@ -280,9 +292,8 @@
         };
         
         try {
-            const response =  await axios.put(`/api/notifications/${notificationId}`, reminder)
+            const response =  axios.put(`/api/notifications/${notificationId}`, reminder)
             .then(response => {
-                window.location.href = 'index.html';
             })
             .catch(error => {
                 console.error('更新提醒時出錯:', error);
@@ -290,5 +301,19 @@
         }  catch (error) {
             console.error('Error:', error);
         }
-    });
+    }
+
+    // 將開關狀態傳送到後台
+    function directExecute(notificationId) {
+        axios.get(`/api/notifications/directExecute/${notificationId}`)
+            .then(response => {
+                console.log('已直接執行排程:', response.data);
+                alert('測試通知已發送到 ' + method);
+            })
+            .catch(error => {
+                console.error('無法直接執行排程:', error);
+            });
+
+        // Optional: ensure any editing mode remains active
+    }
 </script>

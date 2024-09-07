@@ -84,7 +84,6 @@
                 <option value="whatsapp" disabled>WhatsApp</option>
                 <option value="簡訊" disabled>簡訊(已停用)</option>
             </select>
-            <button class="test-button" id="testNotification">測試</button>
         </div>
 
         <!-- 保存按鈕 -->
@@ -201,16 +200,6 @@
             // 當選取 "每天" 時，自動選取所有選項
             if (selectedOptions.includes('每天')) {
                 Array.from(this.options).forEach(option => option.selected = true);
-            }
-        });
-
-        // 測試通知功能
-        document.getElementById('testNotification').addEventListener('click', function() {
-            const method = document.getElementById('noticeMethod').value;
-            if (method === '') {
-                alert('請選擇通知方式後再進行測試。');
-            } else {
-                alert('測試通知已發送到 ' + method);
             }
         });
 

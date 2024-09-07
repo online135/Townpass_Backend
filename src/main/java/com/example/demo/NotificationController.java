@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.model.Notification;
 
@@ -231,12 +229,10 @@ public class NotificationController {
             // 這裡已經確定會執行, 如果不重複, 則把 active 關掉
             if (!notification.isRepeat())
             {
-                // 實作通知的執行邏輯
-                String url = "/api/switchActive/" + notification.getId(); // 假設 API 的 URL 是這個
-
                 try {
                     // 發送 GET 請求
-                    ResponseEntity<String> response = restTemplate.getForEntity(url, null, String.class);
+                    // 實作通知的執行邏輯
+                    ResponseEntity<String> response = directExecute(notification.getId());
                     System.out.println("通知已關閉成功: " + response.getBody());
                 } catch (Exception e) {
                     System.err.println("通知關閉失敗: " + e.getMessage());
@@ -251,22 +247,11 @@ public class NotificationController {
 
     private void performCrontabTask(Notification notification) {
         // 實作通知的執行邏輯
-        // String url = "https://216.239.32.53:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
-        // //String url = "http://localhost:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
-
-
         String recipient = getRecipient(notification);
 
-        // // 使用 URI Builder 構建完整 URL 和參數
-        // UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-        //         .queryParam("subject", notification.getSubCategory())
-        //         .queryParam("noticeMethod", notification.getNoticeMethod())
-        //         .queryParam("recipient", recipient);
-
         try {
-            // 發送 POST 請求
+            // 發送 POST 請求, 用 injection
             ResponseEntity<String> response = rssFeedController.sendSubject(notification.getSubCategory(), notification.getNoticeMethod(), recipient);
-            // ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), null, String.class);
             System.out.println("通知發送成功: " + response.getBody());
         } catch (Exception e) {
             System.err.println("通知發送失敗: " + e.getMessage());

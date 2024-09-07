@@ -60,7 +60,6 @@ public class RssFeedController {
         // mainCategories.add(localNews);
 
         MainCategory TheNewest = new MainCategory("TheNewest", "最新");
-        TheNewest.addSubCategory("PeoplePost", "公民新聞報", "http://www.peopo.org/rss-news");
         TheNewest.addSubCategory("TheNewLens", "關鍵評論網", "https://feeds.feedburner.com/TheNewsLens");
         TheNewest.addSubCategory("Cnn", "CNN", "http://rss.cnn.com/rss/money_topstories.rss");
         mainCategories.add(TheNewest);
@@ -86,7 +85,7 @@ public class RssFeedController {
         MainCategory TwStocks = new MainCategory("TwStocks", "台股");
         String tw_stk_head = "https://tw.stock.yahoo.com/rss?s=";
         String tw_stk_tail = ".TW";
-        TwStocks.addSubCategory("00878", "國泰永續高股息", tw_stk_head + "" + tw_stk_tail);
+        TwStocks.addSubCategory("00878", "國泰永續高股息", tw_stk_head + "00878" + tw_stk_tail);
         TwStocks.addSubCategory("2002", "中鋼", tw_stk_head + "2002" + tw_stk_tail);
         TwStocks.addSubCategory("2330", "台積電", tw_stk_head + "2330" + tw_stk_tail);
         TwStocks.addSubCategory("0056", "元大高股息", tw_stk_head + "0056" + tw_stk_tail);
@@ -114,7 +113,6 @@ public class RssFeedController {
         String fox_head = "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/";
         Sport.addSubCategory("FoxMlb", "FOX體育-MLB", fox_head + "mlb");
         Sport.addSubCategory("FoxNba", "FOX體育-NBA", fox_head + "nba");
-        Sport.addSubCategory("FoxUfc", "FOX體育-UFC", fox_head + "ufc");
         mainCategories.add(Sport);
     }
 

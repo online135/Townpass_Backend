@@ -21,7 +21,8 @@ public class TinyUrlShortener {
         // 檢查響應代碼
         int responseCode = connection.getResponseCode();
         if (responseCode != 200) {
-            throw new IOException("Failed to shorten URL, HTTP response code: " + responseCode);
+            System.out.println("Failed to shorten URL, HTTP response code: " + responseCode);
+            return longUrl;
         }
 
         // 讀取響應
