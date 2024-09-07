@@ -67,7 +67,7 @@ public class NotificationController {
                         "b97b01067@g.ntu.edu.tw",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
-                        "1,2,3,4,5,6,7",
+                        "1,2,3,4,5,7",
                         6,
                         15,
                         true,
