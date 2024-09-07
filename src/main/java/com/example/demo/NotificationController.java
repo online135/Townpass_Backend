@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,7 +25,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 // 台北旅遊網 open api 一覽表
 // https://www.travel.taipei/open-api
@@ -125,8 +123,8 @@ public class NotificationController {
                     break;
                 }
 
-                if (payload.getSubject() != null) {
-                    notification.setSubject((String) payload.getSubject());
+                if (payload.getSubCategory() != null) {
+                    notification.setSubCategory((String) payload.getSubCategory());
                 }
 
                 // notification.setSubject((String) payload.getSubject());
@@ -179,7 +177,7 @@ public class NotificationController {
 
         for (Notification notification : notifications) {
             System.out.println("====================================================");
-            System.out.println("開始進行 " + notification.getSubject() + " 執行與否判斷");
+            System.out.println("開始進行 " + notification.getSubCategory() + " 執行與否判斷");
 
             // 檢查是否啟動中
             if (!notification.isActive()) {
@@ -211,7 +209,7 @@ public class NotificationController {
                 continue; // 如果分鐘不對，跳到下一個通知
             }
 
-            System.out.println("開始執行: " + notification.getSubject());
+            System.out.println("開始執行: " + notification.getSubCategory());
             performCrontabTask(notification);
         }
     }
@@ -224,7 +222,7 @@ public class NotificationController {
 
         // 使用 URI Builder 構建完整 URL 和參數
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("subject", notification.getSubject())
+                .queryParam("subject", notification.getSubCategory())
                 .queryParam("noticeMethod", notification.getNoticeMethod())
                 .queryParam("recipient", recipient);
 

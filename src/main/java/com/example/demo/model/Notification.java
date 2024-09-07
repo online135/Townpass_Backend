@@ -3,8 +3,8 @@ package com.example.demo.model;
 public class Notification {
     private int id;
     private String subjectName;         // 使用者輸入的 中文標題
-    private String category;
-    private String subject;
+    private String mainCategory;
+    private String subCategory;
     private String noticeMethod;
     private String email;
     private String phone;
@@ -17,8 +17,8 @@ public class Notification {
     public Notification(
         int id, 
         String subjectName,         // 使用者輸入的 中文標題
-        String category,            // 通知的大類別 ex: news
-        String subject,             // 通知的主題或標題 ex: taipei_news
+        String mainCategory,            // 通知的大類別 ex: news
+        String subCategory,             // 通知的主題或標題 ex: taipei_news
         String noticeMethod,        // line, email, sms, whatsapp
         String email,  
         String phone,
@@ -30,8 +30,8 @@ public class Notification {
     ) {
         this.id = id;
         this.subjectName = subjectName;
-        this.category = category;
-        this.subject = subject;
+        this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
         this.noticeMethod = noticeMethod;
         this.email = email;
         this.phone = phone;
@@ -59,20 +59,20 @@ public class Notification {
         this.subjectName = subjectName;
     }
 
-    public String getCategory() {
-        return category;
+    public String getMainCategory() {
+        return mainCategory;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setMainCategory(String category) {
+        this.mainCategory = category;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getSubCategory() {
+        return subCategory;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setSubCategory(String subject) {
+        this.subCategory = subject;
     }
 
     public String getNoticeMethod() {
