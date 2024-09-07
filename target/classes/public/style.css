@@ -156,3 +156,55 @@ input:checked + .slider:before {
     border: 1px solid #ccc; /* 加上邊框，與其他下拉選單一致 */
     background-color: white; /* 背景色 */
 }
+
+del {
+    text-decoration: line-through;
+    color:#333;
+}
+
+/* 樣式調整確保所有項目對齊 */
+label {
+    font-size: 16px; /* 根據需求調整字體大小 */
+    color: #333;
+}
+
+/* 編輯按鈕的樣式 */
+.edit-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* 容器樣式 */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* RWD 設計 */
+@media (max-width: 600px) {
+    .form-group {
+        margin-bottom: 10px;
+    }
+}
+
+.switch {
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    position: relative;
+    top: 10px;
+    right: 500px;
+}
+
+/* 當處於編輯模式時顯示刪除按鈕 */
+.reminder-card.editing .delete-button {
+    display: block;
+}
