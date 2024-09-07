@@ -188,7 +188,7 @@
         });
 
         // 儲存提醒
-        document.getElementById('saveReminder').addEventListener('click', function() {
+        document.getElementById('saveReminder').addEventListener('click', async function() {
             const subjectName = document.getElementById('subjectName').value.trim();
             const time = document.getElementById('time').value;
             const dayOfWeek = Array.from(document.getElementById('dayOfWeek').selectedOptions).map(opt => opt.value).join(', ');
@@ -198,7 +198,7 @@
             const isActive = true;
 
             if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod ) {
-                alert('請填寫完整。');
+                alert('請完整填寫資料。');
                 return;
             }
 
@@ -218,21 +218,19 @@
 
             let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
             try {
-                const response =  axios.post('/api/notifications', reminder, {
+                const response =  await axios.post('/api/notifications', reminder, {
                     headers: {
                         'Content-Type': 'application/json',
                     }
                 });
 
                 if (response.status === 201) { // Status 201 indicates resource created
-                    alert('提醒已保存！');
                     window.location.href = 'index.html';
                 } else {
                     throw new Error('Failed to save reminder');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('儲存提醒時發生錯誤。');
             }
         });
     </script>
