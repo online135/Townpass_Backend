@@ -129,7 +129,7 @@ public class NotificationController {
                     notification.setSubCategory((String) payload.getSubCategory());
                 }
 
-                // notification.setSubject((String) payload.getSubject());
+                notification.setSubjectName((String) payload.getSubjectName());
                 notification.setNoticeMethod((String) payload.getNoticeMethod());
                 // notification.setEmail((String) payload.getEmail());
                 // notification.setPhone((String) payload.getPhone());
