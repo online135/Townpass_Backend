@@ -193,7 +193,7 @@
                         <button class="delete-button" onclick="deleteReminder(${reminder.id}, event)">×</button>
 
                         <label class="switch">
-                            <input type="checkbox" checked=${reminder.isActive == true ? 'checked' : ''} onchange="toggleSwitch(${reminder.id}, this.checked)">
+                            <input type="checkbox" onchange="toggleSwitch(${reminder.id})" checked=${reminder.isActive == true ? 'checked' : ' '}>
                             <span class="slider round"></span>
                         </label>
                     `;
@@ -252,8 +252,8 @@
         }
 
         // 將開關狀態傳送到後台
-        function toggleSwitch(reminderId, isChecked) {
-            axios.put(`/api/notifications/${reminderId}/status`, { isActive: isChecked })
+        function toggleSwitch(reminderId) {
+            axios.get(`/api/notifications/switchActive/${reminderId}`)
                 .then(response => {
                     console.log('開關狀態已更新:', response.data);
                 })
@@ -261,8 +261,7 @@
                     console.error('無法更新開關狀態:', error);
                 });
 
-            // 開關狀態改變後關閉編輯模式
-            // 不關閉編輯模式
+            // Optional: ensure any editing mode remains active
         }
 
         // 定義週的名稱對應
