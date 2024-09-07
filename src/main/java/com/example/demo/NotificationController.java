@@ -47,7 +47,7 @@ public class NotificationController {
         // Sample data
         notifications.add(
                 new Notification(
-                        20,
+                        1,
                         "weather",
                         "tycg",
                         "line",
@@ -60,7 +60,7 @@ public class NotificationController {
                         true));
         notifications.add(
                 new Notification(
-                        10,
+                        2,
                         "news",
                         "taipei", // subject
                         "email",

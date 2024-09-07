@@ -192,7 +192,15 @@
                     if (isEditMode) {
                         localStorage.setItem('editingReminder', JSON.stringify(reminder)); // 保存要編輯的提醒內容
                         localStorage.setItem('editingReminderIndex', index); // 保存提醒的索引
-                        window.location.href = 'settingedit.html'; // 進入編輯頁面，內容預設為原設定資料
+                        const reminderId = reminder.id; // 获取提醒的 ID
+
+                        // 调试输出 ID 和 URL
+                        console.log('Reminder ID:', reminderId);
+                        const url = `http://localhost:8080/settingedit.html?id=${reminderId}`;
+                        console.log('Redirect URL:', url);
+
+                        // 确保 URL 正确设置并重定向
+                        window.location.href = url;
                     }
                 };
 
