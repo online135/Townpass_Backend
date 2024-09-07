@@ -208,3 +208,24 @@ label {
 .reminder-card.editing .delete-button {
     display: block;
 }
+
+/* 複選下拉選單容器樣式 */
+.repeat-container {
+    margin-top: 10px;
+}
+
+/* 複選下拉選單樣式 */
+.repeat-select {
+    width: 100%;
+    height: auto; /* 使複選下拉選單自適應內容高度 */
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+/* 複選下拉選單的選項 */
+.repeat-select option {
+    padding: 8px;
+}

@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- 引用外部 CSS 檔案 -->
     <link rel="stylesheet" href="style.css">
 
@@ -37,8 +39,8 @@
         </div>
 
         <!-- 複選下拉選單（預設隱藏） -->
-        <div id="repeatContainer" style="display: none;">
-            <select id="repeat" multiple>
+        <div class="repeat-container" id="repeatContainer" style="display: none;">
+            <select class="repeat-select" id="repeat" multiple>
                 <option value="每天">每天</option>
                 <option value="週一">週一</option>
                 <option value="週二">週二</option>
@@ -199,13 +201,37 @@
                 return;
             }
 
-            const reminder = { subjectName, time, repeat, mainCategory, subCategory, noticeMethod };
-            let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-            reminders.push(reminder);
-            localStorage.setItem('reminders', JSON.stringify(reminders));
+            // 拆分時間為小時和分鐘
+            const [hour, minute] = time.split(':');
 
-            alert('提醒已保存！');
-            window.location.href = 'index.html';
+            const reminder = { 
+                subjectName, 
+                hour, 
+                minute, 
+                repeat, 
+                mainCategory, 
+                subCategory, 
+                noticeMethod 
+            };
+
+            let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            try {
+                const response =  axios.post('/api/notifications', reminder, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.status === 201) { // Status 201 indicates resource created
+                    alert('提醒已保存！');
+                    window.location.href = 'index.html';
+                } else {
+                    throw new Error('Failed to save reminder');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('儲存提醒時發生錯誤。');
+            }
         });
         var select = document.getElementById("簡訊");
         var optionToDisable = select.option[4];

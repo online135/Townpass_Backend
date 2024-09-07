@@ -193,7 +193,7 @@
                         <button class="delete-button" onclick="deleteReminder(${reminder.id}, event)">×</button>
 
                         <label class="switch">
-                            <input type="checkbox" ${reminder.isActive ? 'checked' : ''} onchange="toggleSwitch(${reminder.id}, this.checked)">
+                            <input type="checkbox" checked=${reminder.isActive == true ? 'checked' : ''} onchange="toggleSwitch(${reminder.id}, this.checked)">
                             <span class="slider round"></span>
                         </label>
                     `;
