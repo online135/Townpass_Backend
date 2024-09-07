@@ -1,11 +1,10 @@
 /* 設定網頁的基本樣式 */
 body {
-    font-family: Arial, sans-serif; /* 使用 Arial 字體 */
+    font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
     background-color: #f4f4f4; /* 背景顏色 */
     margin: 0;
     padding: 0;
 }
-
 
  /* 返回鍵樣式 */
  .back-button {
@@ -32,7 +31,9 @@ h1 {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+    color: #5AB4C5;
     border: 2px solid #5AB4C5;
+    font-size: 14px;
 }
 
 /* 按鈕樣式 */
@@ -53,7 +54,7 @@ h1 {
 }
 
 .test-button {
-    margin-top: 20px;
+    margin-top: 30px;
     border: 2px solid #5AB4C5;
     background-color: #FFFFFF;
     color: #5AB4C5;
@@ -111,13 +112,13 @@ input:checked + .slider:before {
     display: none; /* 預設隱藏按鈕 */
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: 20px;
     background-color: #dc3545; /* 紅色背景 */
     color: white; /* 文字白色 */
     border: none;
     padding: 5px;
-    border-radius: 50%; /* 圓形按鈕 */
-    font-size: 14px;
+    border-radius: 40%; /* 圓形按鈕 */
+    font-size: 15px;
     cursor: pointer;
     transform: translateY(-50%); /* 垂直置中 */
 }
@@ -163,6 +164,10 @@ input:checked + .slider:before {
 .form-group label {
     margin-bottom: 5px;
     display: block;
+    color: #5AB4C5;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top:20px;
 }
 
 
@@ -189,8 +194,19 @@ input:checked + .slider:before {
 /* 樣式調整確保所有項目對齊 */
 label {
     font-size: 16px; /* 根據需求調整字體大小 */
-    color: #333;
+    color: #5AB4C5;
 }
+
+input::placeholder{
+    color:#5AB4C5;
+    opacity: 1;
+    font-size: 15px;
+}
+
+input:focus, textarea:focus {
+    outline: none; /* 移除聚焦時的外框 */
+}
+
 
 /* 編輯按鈕的樣式 */
 .edit-button {
@@ -246,12 +262,16 @@ label {
     height: auto; /* 使複選下拉選單自適應內容高度 */
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #5AB4C5;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    color: #5AB4C5;
+    font-size: 14px;
+
 }
 
 /* 複選下拉選單的選項 */
 .repeat-select option {
     padding: 8px;
+    color: #5AB4C5;
 }
