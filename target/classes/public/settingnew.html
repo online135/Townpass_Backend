@@ -11,11 +11,8 @@
     <title>設定提醒</title>
 </head>
 
-
 <body>
-
     <div class="container">
-
         <h1>設定提醒</h1>
 
         <!-- 標題輸入框 -->
@@ -65,12 +62,8 @@
         <!-- 子類別選單 -->
         <div class="form-group">
             <label for="subCategory">子類別</label>
-            <select id="subCategory">
-                <option></option>
-                <option value="會議">會議</option>
-                <option value="截止日期">截止日期</option>
-                <option value="約會">約會</option>
-                <option value="其他">其他</option>
+            <select id="subCategory" disabled>
+                <option value="">請選擇</option>
             </select>
         </div>
 
@@ -115,6 +108,52 @@
                 option.textContent = category.displayName; // Using 'displayName' as the label
                 mainCategorySelect.appendChild(option);
             });
+
+            // Add change event listener to fetch and populate subcategories
+            mainCategorySelect.addEventListener('change', function () {
+                const selectedCategory = mainCategorySelect.value;
+                const subCategorySelect = document.getElementById('subCategory');
+
+                if (selectedCategory) {
+                    fetchSubcategories(selectedCategory);
+                    subCategorySelect.disabled = false; // Enable the subcategory dropdown
+                } else {
+                    clearSubCategoryDropdown(); // Clear subcategory if no main category is selected
+                    subCategorySelect.disabled = true; // Disable the subcategory dropdown
+                }
+            });
+        }
+
+        // Fetch subcategories for the selected main category
+        async function fetchSubcategories(categoryCode) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/rss/categories/${categoryCode}/`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch subcategories');
+                }
+                const category = await response.json();
+                populateSubCategoryDropdown(category.subjects); // Populate the subcategory dropdown
+            } catch (error) {
+                console.error('Error fetching subcategories:', error);
+            }
+        }
+
+        // Populate the subcategory dropdown
+        function populateSubCategoryDropdown(subjects) {
+            const subCategorySelect = document.getElementById('subCategory');
+            clearSubCategoryDropdown(); // Clear previous options
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.code; // Use the subject code as the value
+                option.textContent = subject.displayName; // Use the display name as the label
+                subCategorySelect.appendChild(option);
+            });
+        }
+
+        // Clear the subcategory dropdown
+        function clearSubCategoryDropdown() {
+            const subCategorySelect = document.getElementById('subCategory');
+            subCategorySelect.innerHTML = '<option value="">請選擇</option>';
         }
 
         // Call the function to fetch and populate categories on page load
