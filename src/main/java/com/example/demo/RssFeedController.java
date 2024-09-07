@@ -35,31 +35,87 @@ public class RssFeedController {
     private EmailService emailService;
 
     @Autowired
-    private WhatsAppService whatsAppService;  // Inject WhatsAppService
+    private WhatsAppService whatsAppService; // Inject WhatsAppService
 
     @Autowired
-    private SMSAppService smsAppService;  // Inject SMSAppService
+    private SMSAppService smsAppService; // Inject SMSAppService
 
     @Autowired
     private LineNotifyService lineNotifyService;
 
-    private List<SubjectCategory> categories;  // List of all main categories
+    private List<MainCategory> mainCategories; // List of all main categories
 
     public RssFeedController() {
         categories = new ArrayList<>();
 
-        // Example of adding a main category with its respective subjects
-        SubjectCategory localNews = new SubjectCategory("local_news", "地方新聞");
-        localNews.addSubject("taipei", "台北市", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
-        localNews.addSubject("taichung", "台中市", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
-        localNews.addSubject("tycg", "桃園市", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
-        // Add the main category to the list
-        categories.add(localNews);
+        // // Example of adding a main category with its respective subjects
+        // MainCategory localNews = new MainCategory("local_news", "地方新聞");
+        // localNews.addSubCategory("taipei", "台北市",
+        // "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
+        // localNews.addSubCategory("taichung", "台中市",
+        // "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        // localNews.addSubCategory("tycg", "桃園市",
+        // "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
+        // // Add the main category to the list
+        // mainCategories.add(localNews);
 
-        // You can add more main categories similarly
-        SubjectCategory otherCategory = new SubjectCategory("other_news", "其他分類");
-        otherCategory.addSubject("other", "其他新聞", "https://example.com/rss");
-        categories.add(otherCategory);
+        MainCategory TheNewest = new MainCategory("TheNewest", "最新");
+        TheNewest.addSubCategory("PeoplePost", "公民新聞報", "http://www.peopo.org/rss-news");
+        TheNewest.addSubCategory("TheNewLens", "關鍵評論網", "https://feeds.feedburner.com/TheNewsLens");
+        TheNewest.addSubCategory("Cnn", "CNN", "http://rss.cnn.com/rss/money_topstories.rss");
+        mainCategories.add(TheNewest);
+        MainCategory Weather = new MainCategory("Weather", "天氣");
+        String weather_head = "https://www.cwa.gov.tw/rss/forecast/36_";
+        String weather_tail = ".xml";
+        Weather.addSubCategory("KeelungCity", "基隆市", weather_head + "03" + weather_tail);
+        Weather.addSubCategory("TaipeiCity", "台北市", weather_head + "01" + weather_tail);
+        Weather.addSubCategory("NewTaipeiCity", "新北市", weather_head + "04" + weather_tail);
+        Weather.addSubCategory("TaoyuanCity", "桃園市", weather_head + "05" + weather_tail);
+        Weather.addSubCategory("HsinchuCity", "新竹市", weather_head + "14" + weather_tail);
+        Weather.addSubCategory("HsinchuCounty", "新竹縣", weather_head + "06" + weather_tail);
+        Weather.addSubCategory("MiaoliCounty", "苗栗縣", weather_head + "07" + weather_tail);
+        mainCategories.add(Weather);
+        MainCategory WeatherWarning = new MainCategory("WeatherWarning", "警報特報");
+        WeatherWarning.addSubCategory("WeatherWarning", "警報特報", "https://www.cwa.gov.tw/rss/Data/cwa_warning.xml");
+        mainCategories.add(WeatherWarning);
+        MainCategory GovInfo = new MainCategory("GovInfo", "政府資訊");
+        GovInfo.addSubCategory("Taipei", "台北市政府", "https://www.gov.taipei/OpenData.aspx?SN=D33B55D537402BAA");
+        GovInfo.addSubCategory("Taoyuan", "桃園市政府", "https://www.tycg.gov.tw/OpenData.aspx?SN=65D106AB5A9DB388");
+        GovInfo.addSubCategory("Taichung", "台中市政府", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        mainCategories.add(GovInfo);
+        MainCategory TwStocks = new MainCategory("TwStocks", "台股");
+        String tw_stk_head = "https://tw.stock.yahoo.com/rss?s=";
+        String tw_stk_tail = ".TW";
+        TwStocks.addSubCategory("00878", "國泰永續高股息", tw_stk_head + "" + tw_stk_tail);
+        TwStocks.addSubCategory("2002", "中鋼", tw_stk_head + "2002" + tw_stk_tail);
+        TwStocks.addSubCategory("2330", "台積電", tw_stk_head + "2330" + tw_stk_tail);
+        TwStocks.addSubCategory("0056", "元大高股息", tw_stk_head + "0056" + tw_stk_tail);
+        TwStocks.addSubCategory("00940", "元大台灣價值高息", tw_stk_head + "00940" + tw_stk_tail);
+        TwStocks.addSubCategory("2883", "開發金", tw_stk_head + "2883" + tw_stk_tail);
+        TwStocks.addSubCategory("2303", "聯電", tw_stk_head + "2303" + tw_stk_tail);
+        TwStocks.addSubCategory("00919", "群益台灣精選高息", tw_stk_head + "00919" + tw_stk_tail);
+        TwStocks.addSubCategory("2317", "鴻海", tw_stk_head + "2317" + tw_stk_tail);
+        TwStocks.addSubCategory("00929", "復華台灣科技優息", tw_stk_head + "00929" + tw_stk_tail);
+        TwStocks.addSubCategory("0050", "元大台灣50", tw_stk_head + "0050" + tw_stk_tail);
+        mainCategories.add(TwStocks);
+        MainCategory UsStocks = new MainCategory("UsStocks", "美股");
+        String us_stk_head = "https://www.nasdaq.com/feed/rssoutbound?symbol=";
+        UsStocks.addSubCategory("Apple", "蘋果 Apple", us_stk_head + "aapl");
+        UsStocks.addSubCategory("Amazon", "亞馬遜 Amazon", us_stk_head + "AMZN");
+        UsStocks.addSubCategory("Facebook", "臉書 Facebook", us_stk_head + "FB");
+        UsStocks.addSubCategory("Tesla", "特斯拉 Tesla", us_stk_head + "TSLA");
+        UsStocks.addSubCategory("AMD", "超微 AMD", us_stk_head + "AMD");
+        UsStocks.addSubCategory("Nvidia", "輝達 Nvidia", us_stk_head + "NVDA");
+        mainCategories.add(UsStocks);
+        MainCategory Sport = new MainCategory("Sport", "運動");
+        Sport.addSubCategory("TheCentralNewsAgency", "中央通訊社", "https://feeds.feedburner.com/rsscna/sport");
+        Sport.addSubCategory("LibertyTimesNews", "自由時報", "https://news.ltn.com.tw/rss/sports.xml");
+        Sport.addSubCategory("TsnaProfessional", "TSNA體育", "https://news.tsna.com.tw/rss.php?num=11");
+        String fox_head = "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmuj2lUhuRhQaafhBjAJqaPU244mlTDK1i&size=30&tags=fs/";
+        Sport.addSubCategory("FoxMlb", "FOX體育-MLB", fox_head + "mlb");
+        Sport.addSubCategory("FoxNba", "FOX體育-NBA", fox_head + "nba");
+        Sport.addSubCategory("FoxUfc", "FOX體育-UFC", fox_head + "ufc");
+        mainCategories.add(Sport);
     }
 
     // API endpoint to get all categories
@@ -71,13 +127,12 @@ public class RssFeedController {
 
     // API endpoint to get subjects by category code
     // Method to retrieve subjects, 丟入大分類的 String code, 取得小分類
-    @GetMapping("/categories/{category}/")
-    public SubjectCategory getSubjectsByCategory(
-        @PathVariable String category
-    ) {
-        for (SubjectCategory subjectCategory : categories) {
-            if (subjectCategory.getCode().equals(category)) {
-                return subjectCategory;
+    @GetMapping("/mainCategories/{subCategory}/")
+    public MainCategory getSubjectsByCategory(
+            @PathVariable String subCategory) {
+        for (MainCategory mainCategory : mainCategories) {
+            if (mainCategory.getCode().equals(subCategory)) {
+                return mainCategory;
             }
         }
         return null;
@@ -97,21 +152,20 @@ public class RssFeedController {
     // 寄送通知 api
     @PostMapping("/send-subject/")
     public ResponseEntity<String> sendSubject(
-        @RequestParam("subject") String subject, 
-        @RequestParam("noticeMethod") String noticeMethod, 
-        @RequestParam("recipient") String recipient) {   
+            @RequestParam("subject") String subject,
+            @RequestParam("noticeMethod") String noticeMethod,
+            @RequestParam("recipient") String recipient) {
 
         String rssUrl = getRssUri(subject);
         System.out.println(rssUrl);
-        
+
         if (rssUrl == null) {
             return new ResponseEntity<>("Invalid subject", HttpStatus.BAD_REQUEST);
         }
 
         RssFeedResult rssFeedResult = rssFeedService.fetchAndFormatRssFeed(rssUrl);
 
-        switch(noticeMethod)
-        {
+        switch (noticeMethod) {
             // email
             case "email":
                 if (recipient == null || !isValidEmail(recipient)) {
@@ -120,12 +174,12 @@ public class RssFeedController {
 
                 emailService.sendEmailWithRssContent(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
-            
+
             // line
             case "line":
                 lineNotifyService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via LINE Notify successfully", HttpStatus.OK);
-            
+
             // whatsapp
             case "whatsapp":
                 if (recipient == null || !isValidPhoneNumber(recipient)) {
@@ -146,7 +200,6 @@ public class RssFeedController {
 
                 smsAppService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
-
 
             default:
                 return new ResponseEntity<>("Invalid notification method", HttpStatus.BAD_REQUEST);
