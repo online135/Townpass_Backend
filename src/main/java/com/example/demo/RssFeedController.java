@@ -1,25 +1,27 @@
 package com.example.demo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.RssFeedItem;
 import com.example.demo.model.RssFeedResult;
+import com.example.demo.model.Subject;
+import com.example.demo.model.SubjectCategory;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
-import com.example.demo.service.SmsService;
+import com.example.demo.service.SMSAppService;
+import com.example.demo.service.WhatsAppService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -30,36 +32,77 @@ public class RssFeedController {
     private RssFeedService rssFeedService;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private EmailService emailService;
 
     @Autowired
-    private SmsService smsService;  // Inject SMS service
+    private WhatsAppService whatsAppService;  // Inject WhatsAppService
+
+    @Autowired
+    private SMSAppService smsAppService;  // Inject SMSAppService
 
     @Autowired
     private LineNotifyService lineNotifyService;
 
-    private Map<String, String> subjectRssUrls;
+    private List<SubjectCategory> categories;  // List of all main categories
 
     public RssFeedController() {
-        // Initialize the subject-to-RSS URL mapping
-        subjectRssUrls = new HashMap<>();
-        subjectRssUrls.put("tycg", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
-        subjectRssUrls.put("taipei", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
-        subjectRssUrls.put("taichung", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
-        // Add more regions as needed
+        categories = new ArrayList<>();
+
+        // Example of adding a main category with its respective subjects
+        SubjectCategory localNews = new SubjectCategory("local_news", "地方新聞");
+        localNews.addSubject("taipei", "台北市", "https://www.gov.taipei/OpenData.aspx?SN=7DEC7150E6BAD606");
+        localNews.addSubject("taichung", "台中市", "https://www.taichung.gov.tw/10179/564770/rss?nodeId=9962");
+        localNews.addSubject("tycg", "桃園市", "https://news.tycg.gov.tw/OpenData.aspx?SN=65C6B1AA38BDD145");
+        // Add the main category to the list
+        categories.add(localNews);
+
+        // You can add more main categories similarly
+        SubjectCategory otherCategory = new SubjectCategory("other_news", "其他分類");
+        otherCategory.addSubject("other", "其他新聞", "https://example.com/rss");
+        categories.add(otherCategory);
     }
 
-    private String getRssUrlBySubject(String subject) {
-        return subjectRssUrls.get(subject);
+    // API endpoint to get all categories
+    // Method to retrieve categories, 取得大分類列表
+    @GetMapping("/categories")
+    public List<SubjectCategory> getCategories() {
+        return categories;
     }
 
-    @GetMapping("/send-subject/{subject}/{noticeMethod}/{recipient}")
+    // API endpoint to get subjects by category code
+    // Method to retrieve subjects, 丟入大分類的 String code, 取得小分類
+    @GetMapping("/categories/{category}/")
+    public SubjectCategory getSubjectsByCategory(
+        @PathVariable String category
+    ) {
+        for (SubjectCategory subjectCategory : categories) {
+            if (subjectCategory.getCode().equals(category)) {
+                return subjectCategory;
+            }
+        }
+        return null;
+    }
+
+    private String getRssUri(String subject) {
+        for (SubjectCategory category : categories) {
+            for (Subject subj : category.getSubjects()) {
+                if (subj.getCode().equalsIgnoreCase(subject)) {
+                    return subj.getRssUri();
+                }
+            }
+        }
+        return "Subject not found"; // Handle cases where the subject does not exist
+    }
+
+    // 寄送通知 api
+    @PostMapping("/send-subject/")
     public ResponseEntity<String> sendSubject(
-        @PathVariable("subject") String subject, 
-        @PathVariable("noticeMethod") String noticeMethod, 
-        @PathVariable("recipient") String recipient) {   
+        @RequestParam("subject") String subject, 
+        @RequestParam("noticeMethod") String noticeMethod, 
+        @RequestParam("recipient") String recipient) {   
 
-        String rssUrl = getRssUrlBySubject(subject);
+        String rssUrl = getRssUri(subject);
+        System.out.println(rssUrl);
         
         if (rssUrl == null) {
             return new ResponseEntity<>("Invalid subject", HttpStatus.BAD_REQUEST);
@@ -71,71 +114,55 @@ public class RssFeedController {
         {
             // email
             case "email":
-                sendEmailWithRssContent(recipient, rssFeedResult);
+                if (recipient == null || !isValidEmail(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing email address", HttpStatus.BAD_REQUEST);
+                }
 
+                emailService.sendEmailWithRssContent(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via email successfully", HttpStatus.OK);
             
             // line
             case "line":
-                lineNotifyService.sendNotification(rssFeedResult);
-
+                lineNotifyService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via LINE Notify successfully", HttpStatus.OK);
             
-            // sms
-            case "sms":
-                smsService.sendNotification(rssFeedResult);
+            // whatsapp
+            case "whatsapp":
+                if (recipient == null || !isValidPhoneNumber(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
+                }
 
+                whatsAppService.sendNotification(rssFeedResult, recipient);
+                return new ResponseEntity<>("RSS feed sent via whatsapp successfully", HttpStatus.OK);
+
+            // 三竹需要有統編後跟簡訊商開通才能夠串接 api 成功
+            // sms, 要串台灣簡訊商 三竹 等才可以寄送(需再申請對應api, token 等)
+            // https://www.twsms.com/
+            // 三竹簡訊 https://msg.mitake.com.tw/SMS/Home.jsp?t=1725121253337
+            case "sms":
+                if (recipient == null || !isValidPhoneNumber(recipient)) {
+                    return new ResponseEntity<>("Invalid or missing phone number", HttpStatus.BAD_REQUEST);
+                }
+
+                smsAppService.sendNotification(rssFeedResult, recipient);
                 return new ResponseEntity<>("RSS feed sent via sms successfully", HttpStatus.OK);
+
+
             default:
                 return new ResponseEntity<>("Invalid notification method", HttpStatus.BAD_REQUEST);
 
         }
     }
 
-    private void sendEmailWithRssContent(String to, RssFeedResult rssFeedResult) {
-        MimeMessagePreparator preparator = mimeMessage -> {
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            message.setTo(to);
-            message.setSubject(rssFeedResult.getTitle());
+    // Basic validation for email addresses
+    private boolean isValidEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$";
+        return email.matches(emailRegex);
+    }
 
-            // Construct the HTML content
-            StringBuilder emailContent = new StringBuilder();
-            emailContent.append("<div style='font-family: Arial, sans-serif; color: #333;'>")
-                        .append("<h2 style='color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 5px;'>")
-                        // Make the main title clickable
-                        .append("<a href='").append(rssFeedResult.getLink()).append("' style='color: #0056b3; text-decoration: none;'>")
-                        .append(rssFeedResult.getTitle())
-                        .append("</a>")
-                        .append("</h2>")
-                        .append("<p style='font-size: 14px; color: #333;'>更多內容請看 <a href=\"").append(rssFeedResult.getLink())
-                        .append("\" style='color: #1a73e8; text-decoration: none;'>這裡</a>。</p>");
-
-            // Append each item in the RSS feed with clickable titles and links
-            for (RssFeedItem item : rssFeedResult.getItems()) {
-                emailContent.append("<div style='border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 15px; border-radius: 8px; background-color: #f9f9f9;'>")
-                            .append("<h3 style='color: #0056b3; margin-bottom: 8px;'>")
-                            // Make the item title clickable
-                            .append("<a href='").append(item.getLink()).append("' style='color: #0056b3; text-decoration: none;'>")
-                            .append(item.getTitle())
-                            .append("</a>")
-                            .append("</h3>")
-                            .append("<p style='font-size: 14px; color: #555;'>").append(item.getDescription()).append("</p>")
-                            .append("<p style='font-size: 14px; margin-top: 10px;'>更多內容請看 <a href=\"").append(item.getLink())
-                            .append("\" style='color: #1a73e8; text-decoration: none;'>連結</a></p>")
-                            .append("</div>");
-            }
-
-            emailContent.append("</div>");
-
-            // Set the constructed HTML content as the email body
-            message.setText(emailContent.toString(), true); // 'true' indicates the content is HTML
-        };
-
-        try {
-            mailSender.send(preparator);
-            System.out.println("HTML email sent to " + to);
-        } catch (Exception e) {
-            System.err.println("Error sending email: " + e.getMessage());
-        }
+    // Basic validation for phone numbers (e.g., digits only, 7-15 characters)
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        String phoneRegex = "^\\d{7,15}$";
+        return phoneNumber.matches(phoneRegex);
     }
 }

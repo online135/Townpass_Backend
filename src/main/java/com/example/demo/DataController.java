@@ -65,7 +65,9 @@ public class DataController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getDataById(@PathVariable("id") int id) {
+    public ResponseEntity<Map<String, Object>> getDataById(
+        @PathVariable("id") int id
+    ) {
         for (Map<String, Object> item : issueList) {
             if (item.get("id").equals(id)) {
                 return new ResponseEntity<>(item, HttpStatus.OK);
@@ -75,7 +77,9 @@ public class DataController {
     }
 
     @PostMapping
-    public ResponseEntity<String> postData(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> postData(
+        @RequestBody Map<String, Object> payload
+    ) {
         int nextId = issueList.isEmpty() ? 1 : issueList.stream()
         .mapToInt(item -> (int) item.get("id"))
         .max()
@@ -89,7 +93,10 @@ public class DataController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateData(@PathVariable("id") int id, @RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> updateData(
+        @PathVariable("id") int id, 
+        @RequestBody Map<String, Object> payload
+    ) {
         for (Map<String, Object> item : issueList) {
             if (item.get("id").equals(id)) {
                 item.put("category", payload.get("category"));
@@ -103,7 +110,9 @@ public class DataController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteData(@PathVariable("id") int id) {
+    public ResponseEntity<String> deleteData(
+        @PathVariable("id") int id
+    ) {
         for (Map<String, Object> item : issueList) {
             if (item.get("id").equals(id)) {
                 issueList.remove(item);
