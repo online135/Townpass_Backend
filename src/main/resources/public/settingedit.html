@@ -6,68 +6,17 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- 引用外部 CSS 檔案 -->
+    <link rel="stylesheet" href="style.css">
+
     <title>設定提醒</title>
 
     <style>
-
-        /* 基本樣式 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
         /* 容器樣式 */
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-        }
-
-        /* 標題樣式 */
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        /* 表單項目樣式 */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        /* 按鈕樣式 */
-        .save-button,
-        .test-button {
-            width: 100%;
-            padding: 10px;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .save-button {
-            background-color: #007bff;
-        }
-
-        .test-button {
-            margin-top: 10px;
-            background-color: #28a745;
         }
 
         /* RWD 設計 */
@@ -76,91 +25,26 @@
                 margin-bottom: 10px;
             }
         }
-        /* Switch Button 樣式 */
+
+        /* 樣式調整確保所有項目對齊 */
+        label {
+            font-size: 16px; /* 根據需求調整字體大小 */
+            color: #333;
+        }
+
         .switch {
-            position: absolute;
-            top: 50%;
-            right: 60px;
-            transform: translateY(-50%);
+            display: inline-block;
             width: 40px;
             height: 20px;
+            position: relative;
+            top: 10px;
+            right: 500px;
         }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: 0.4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: 0.4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: #007bff;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-
-        /* Flexbox 設定，使文字與 Switch Button 同行排列 */
-.flex-row {
-    display: flex;
-    justify-content:space-between; /* 文字與按鈕兩側排列 */
-    align-items: center; /* 垂直置中 */
-    margin-bottom: 10px;
-}
-
-/* 樣式調整確保所有項目對齊 */
-label {
-    font-size: 16px; /* 根據需求調整字體大小 */
-    color: #333;
-}
-
-.switch {
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-    position: relative;
-    top: 10px;
-    right: 500px;
-}
-
-/* 為重複選單設置與其他選單相同的寬度和樣式 */
-#repeat {
-    width: 100%; /* 與其他輸入框一致的寬度 */
-    padding: 8px; /* 與其他輸入框一致的內間距 */
-    box-sizing: border-box; /* 讓寬度包含內邊距與邊框 */
-    margin-top: 10px; /* 與其他表單項目一致的間距 */
-    border-radius: 5px; /* 圓角效果 */
-    border: 1px solid #ccc; /* 加上邊框，與其他下拉選單一致 */
-    background-color: white; /* 背景色 */
-}
-
     </style>
-
 </head>
 
-
 <body>
-
     <div class="container">
-        
         <h1>設定提醒</h1>
 
         <!-- 標題輸入框 -->

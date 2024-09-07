@@ -1,0 +1,158 @@
+/* 設定網頁的基本樣式 */
+body {
+    font-family: Arial, sans-serif; /* 使用 Arial 字體 */
+    background-color: #f4f4f4; /* 背景顏色 */
+    margin: 0;
+    padding: 0;
+}
+
+/* 標題樣式 */
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* 按鈕樣式 */
+.save-button,
+.test-button {
+    width: 100%;
+    padding: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.save-button {
+    background-color: #007bff;
+}
+
+.test-button {
+    margin-top: 10px;
+    background-color: #28a745;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* 未啟用狀態的背景顏色 */
+    transition: 0.4s;
+    border-radius: 34px; /* 圓角 */
+}
+
+/* 開關樣式 */
+.switch {
+    position: absolute;
+    top: 50%;
+    right: 60px;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 20px;
+}
+
+input:checked + .slider {
+    background-color: #007bff;
+}
+
+/* 當開關啟用時，切換按鈕移動到右側 */
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* 刪除按鈕的樣式 */
+.delete-button {
+    display: none; /* 預設隱藏按鈕 */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    background-color: #dc3545; /* 紅色背景 */
+    color: white; /* 文字白色 */
+    border: none;
+    padding: 5px;
+    border-radius: 50%; /* 圓形按鈕 */
+    font-size: 14px;
+    cursor: pointer;
+    transform: translateY(-50%); /* 垂直置中 */
+}
+
+/* 加號按鈕的樣式 */
+.add-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #007bff; /* 藍色背景 */
+    color: white; /* 文字白色 */
+    border: none;
+    padding: 15px;
+    border-radius: 50%; /* 圓形按鈕 */
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* 提醒卡片樣式 */
+.reminder-card {
+    background-color: white; /* 背景白色 */
+    padding: 15px;
+    border-radius: 5px; /* 圓角效果 */
+    margin-bottom: 10px; /* 卡片之間的間距 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 投影效果 */
+    display: flex; /* 使用 flexbox 排版 */
+    justify-content: space-between; /* 兩邊元素對齊 */
+    align-items: center; /* 垂直置中 */
+    position: relative; /* 相對定位 */
+    cursor: pointer; /* 設定滑鼠移過時的指標樣式 */
+}
+
+/* 表單項目樣式 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    display: block;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%; /* 圓形切換按鈕 */
+}
+
+/* Flexbox 設定，使文字與 Switch Button 同行排列 */
+.flex-row {
+    display: flex;
+    justify-content:space-between; /* 文字與按鈕兩側排列 */
+    align-items: center; /* 垂直置中 */
+    margin-bottom: 10px;
+}
+
+/* 為重複選單設置與其他選單相同的寬度和樣式 */
+#repeat {
+    width: 100%; /* 與其他輸入框一致的寬度 */
+    padding: 8px; /* 與其他輸入框一致的內間距 */
+    box-sizing: border-box; /* 讓寬度包含內邊距與邊框 */
+    margin-top: 10px; /* 與其他表單項目一致的間距 */
+    border-radius: 5px; /* 圓角效果 */
+    border: 1px solid #ccc; /* 加上邊框，與其他下拉選單一致 */
+    background-color: white; /* 背景色 */
+}
