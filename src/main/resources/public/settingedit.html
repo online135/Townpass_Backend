@@ -1,6 +1,5 @@
-<!--編輯模式-->
 <!DOCTYPE html>
-<html lang="zh-Hant"> <!--中文-->
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -29,7 +28,7 @@
         <!-- 時間選擇 -->
         <div class="form-group">
             <label for="time">時間</label>
-            <input type="time" id="time" value="${new Date().toTimeString().substr(0, 5)}">
+            <input type="time" id="time" value="${new Date().toISOString().substr(11, 5)}">
         </div>
 
         <!-- 重複選單 -->
@@ -42,16 +41,16 @@
         </div>
 
         <!-- 複選下拉選單（預設隱藏） -->
-        <div id="repeatContainer" style="display: none;">
-            <select id="repeat" multiple>
-                <option value="每天">每天</option>
-                <option value="週一">週一</option>
-                <option value="週二">週二</option>
-                <option value="週三">週三</option>
-                <option value="週四">週四</option>
-                <option value="週五">週五</option>
-                <option value="週六">週六</option>                    
-                <option value="週日">週日</option>
+        <div class="repeat-container" id="repeatContainer" style="display: none;">
+            <select class="repeat-select" id="dayOfWeek" multiple>
+                <option value="1,2,3,4,5,6,7">每天</option>
+                <option value="1">週一</option>
+                <option value="2">週二</option>
+                <option value="3">週三</option>
+                <option value="4">週四</option>
+                <option value="5">週五</option>
+                <option value="6">週六</option>                    
+                <option value="7">週日</option>
             </select>
         </div>
 
@@ -66,12 +65,8 @@
         <!-- 子類別選單 -->
         <div class="form-group">
             <label for="subCategory">子類別</label>
-            <select id="subCategory">
-                <option></option>
-                <option value="會議">會議</option>
-                <option value="截止日期">截止日期</option>
-                <option value="約會">約會</option>
-                <option value="其他">其他</option>
+            <select id="subCategory" disabled>
+                <option value="">請選擇</option>
             </select>
         </div>
 
@@ -93,7 +88,6 @@
     </div>
 </body>
 </html>
-
 
 <script>
 
@@ -133,20 +127,83 @@
             }
         }
 
-        // Populate the dropdown with main categories
-        function populateMainCategoryDropdown(categories) {
-            const mainCategorySelect = document.getElementById('mainCategory');
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.code; // Using 'code' as value (adjust if necessary)
-                option.textContent = category.displayName; // Using 'displayName' as the label
-                mainCategorySelect.appendChild(option);
-            });
+    // Populate the dropdown with main categories
+    function populateMainCategoryDropdown(categories) {
+        const mainCategorySelect = document.getElementById('mainCategory');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.code;
+            option.textContent = category.displayName;
+            mainCategorySelect.appendChild(option);
+        });
+
+        // Add change event listener to fetch and populate subcategories
+        mainCategorySelect.addEventListener('change', function () {
+            const selectedCategory = mainCategorySelect.value;
+            const subCategorySelect = document.getElementById('subCategory');
+
+            if (selectedCategory) {
+                fetchSubcategories(selectedCategory);
+                subCategorySelect.disabled = false;
+            } else {
+                clearSubCategoryDropdown();
+                subCategorySelect.disabled = true;
+            }
+        });
+    }
+
+    // Fetch subcategories for the selected main category
+    async function fetchSubcategories(categoryCode) {
+        try {
+            const response = await fetch(`/api/rss/mainCategories/${categoryCode}/`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch subcategories');
+            }
+            const mainCategory = await response.json();
+            populateSubCategoryDropdown(mainCategory.subCategories);
+        } catch (error) {
+            console.error('Error fetching subcategories:', error);
         }
+    }
 
-        // Call the function to fetch and populate categories on page load
-        document.addEventListener('DOMContentLoaded', fetchCategories);
+    // Populate the subcategory dropdown
+    function populateSubCategoryDropdown(subCategories) {
+        const subCategorySelect = document.getElementById('subCategory');
+        clearSubCategoryDropdown();
+        subCategories.forEach(subCategory => {
+            const option = document.createElement('option');
+            option.value = subCategory.code;
+            option.textContent = subCategory.displayName;
+            subCategorySelect.appendChild(option);
+        });
+    }
 
+    // Clear the subcategory dropdown
+    function clearSubCategoryDropdown() {
+        const subCategorySelect = document.getElementById('subCategory');
+        subCategorySelect.innerHTML = '<option value="">請選擇</option>';
+    }
+
+    // Call the function to fetch and populate categories on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchCategories();
+        
+        const notificationId = getQueryParam('id');
+        if (notificationId) {
+            axios.get(`/api/notifications/${notificationId}`)
+                .then(response => {
+                    let notification = response.data;
+                    document.getElementById('subjectName').value = notification.subjectName || '';
+                    document.getElementById('time').value = `${notification.hour.toString().padStart(2, '0')}:${notification.minute.toString().padStart(2, '0')}`;
+                    document.getElementById('mainCategory').value = notification.mainCategory || '';
+                    document.getElementById('subCategory').value = notification.subCategory || '';
+                    document.getElementById('noticeMethod').value = notification.noticeMethod || '';
+                })
+                .catch(error => {
+                    console.error('獲取提醒資訊時出錯:', error);
+                });
+        }
+    });
 
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -162,9 +219,25 @@
         }
     });
 
-    document.getElementById('saveReminder').addEventListener('click', function() {
-        const subjectName = document.getElementById('subjectName').value.trim();
+    document.getElementById('repeatSwitch').addEventListener('change', function() {
+        const repeatContainer = document.getElementById('repeatContainer');
+        repeatContainer.style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('dayOfWeek').addEventListener('change', function() {
+        const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+        
+        // 當選取 "每天" 時，自動選取所有選項
+        if (selectedOptions.includes('每天')) {
+            Array.from(this.options).forEach(option => option.selected = true);
+        }
+    });
+
+    //更新
+    document.getElementById('saveReminder').addEventListener('click', async function() {
+        const subjectName = document.getElementById('subjectName').value;
         const time = document.getElementById('time').value;
+        const dayOfWeek = Array.from(document.getElementById('dayOfWeek').selectedOptions).map(opt => opt.value).join(', ');
         const mainCategory = document.getElementById('mainCategory').value;
         const subCategory = document.getElementById('subCategory').value;
         const noticeMethod = document.getElementById('noticeMethod').value;
@@ -175,42 +248,47 @@
         }
 
         const notificationId = getQueryParam('id');
-        const updatedNotification = {
-            id: notificationId,
-            subjectName: subjectName,
-            hour: parseInt(time.split(':')[0]),
-            minute: parseInt(time.split(':')[1]),
-            mainCategory: mainCategory,
-            subCategory: subCategory,
-            noticeMethod: noticeMethod
+
+        // 拆分時間為小時和分鐘
+        const [hour, minute] = time.split(':');
+
+        const reminder = { 
+            subjectName, 
+            hour, 
+            minute, 
+            dayOfWeek, 
+            mainCategory, 
+            subCategory, 
+            noticeMethod
         };
 
-        axios.put(`/api/notifications/${notificationId}`, updatedNotification)
+
+        // try {
+        //     const response =  await axios.post('/api/notifications/', reminder, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     });
+
+        //     if (response.status === 201) { // Status 201 indicates resource created
+        //         window.location.href = 'index.html';
+        //     } else {
+        //         throw new Error('Failed to save reminder');
+        //     }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        // }
+        
+        try {
+            const response =  await axios.put(`/api/notifications/${notificationId}`, reminder)
             .then(response => {
-                alert('提醒已更新！');
                 window.location.href = 'index.html';
             })
             .catch(error => {
                 console.error('更新提醒時出錯:', error);
-                alert('更新提醒時出錯。請重試。');
             });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const notificationId = getQueryParam('id');
-        if (notificationId) {
-            axios.get(`/api/notifications/${notificationId}`)
-                .then(response => {
-                    let notification = response.data;
-                    document.getElementById('subjectName').value = notification.subjectName || '';
-                    document.getElementById('time').value = `${notification.hour.toString().padStart(2, '0')}:${notification.minute.toString().padStart(2, '0')}`;
-                    document.getElementById('mainCategory').value = notification.mainCategory || '';
-                    document.getElementById('subCategory').value = notification.subCategory || '';
-                    document.getElementById('noticeMethod').value = notification.noticeMethod || '';
-                })
-                .catch(error => {
-                    console.error('獲取提醒資訊時出錯:', error);
-                });
+        }  catch (error) {
+            console.error('Error:', error);
         }
     });
 </script>

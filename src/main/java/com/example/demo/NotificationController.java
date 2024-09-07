@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,6 +55,7 @@ public class NotificationController {
                         "1,2,3,4,5",
                         23,
                         35,
+                        true,
                         true));
         notifications.add(
                 new Notification(
@@ -61,13 +63,14 @@ public class NotificationController {
                         "測試標題2",
                         "news",
                         "taipei", // subject
-                        "email",
+                        "line",
                         "b97b01067@g.ntu.edu.tw",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
                         "7",
-                        11,
-                        57,
+                        4,
+                        7,
+                        true,
                         true));
 
     }
@@ -129,15 +132,16 @@ public class NotificationController {
                     notification.setSubCategory((String) payload.getSubCategory());
                 }
 
-                // notification.setSubject((String) payload.getSubject());
+                notification.setSubjectName((String) payload.getSubjectName());
                 notification.setNoticeMethod((String) payload.getNoticeMethod());
-                notification.setEmail((String) payload.getEmail());
-                notification.setPhone((String) payload.getPhone());
-                notification.setLineNotifyToken((String) payload.getLineNotifyToken());
+                // notification.setEmail((String) payload.getEmail());
+                // notification.setPhone((String) payload.getPhone());
+                // notification.setLineNotifyToken((String) payload.getLineNotifyToken());
+                System.out.println(payload.getDayOfWeek());
                 notification.setDayOfWeek((String) payload.getDayOfWeek());
                 notification.setHour((int) payload.getHour());
                 notification.setMinute((int) payload.getMinute());
-                notification.setActive((boolean) payload.isActive());
+                // notification.setActive((boolean) payload.isActive());
 
                 // 回應更新成功
                 return new ResponseEntity<>("Notification updated successfully", HttpStatus.OK);
@@ -211,26 +215,47 @@ public class NotificationController {
                 continue; // 如果分鐘不對，跳到下一個通知
             }
 
+
+            // 這裡已經確定會執行, 如果不重複, 則把 active 關掉
+            if (!notification.isRepeat())
+            {
+                // 實作通知的執行邏輯
+                String url = "/api/switchActive/" + notification.getId(); // 假設 API 的 URL 是這個
+
+                try {
+                    // 發送 GET 請求
+                    ResponseEntity<String> response = restTemplate.getForEntity(url, null, String.class);
+                    System.out.println("通知已關閉成功: " + response.getBody());
+                } catch (Exception e) {
+                    System.err.println("通知關閉失敗: " + e.getMessage());
+                }
+
+            }
+
             System.out.println("開始執行: " + notification.getSubCategory());
             performCrontabTask(notification);
         }
     }
 
     private void performCrontabTask(Notification notification) {
-        // 實作通知的執行邏輯
-        String url = "http://localhost:8080/api/rss/send-subject/"; // 假設 API 的 URL 是這個
+        // Define the relative path of the API endpoint with placeholders for path variables
+        String relativeUrl = "/api/rss/send-subject/{subject}/{noticeMethod}/{recipient}";
 
+        // Extract values to be used as path variables
+        String subject = notification.getSubCategory();
+        String noticeMethod = notification.getNoticeMethod();
         String recipient = getRecipient(notification);
-
-        // 使用 URI Builder 構建完整 URL 和參數
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("subject", notification.getSubCategory())
-                .queryParam("noticeMethod", notification.getNoticeMethod())
-                .queryParam("recipient", recipient);
-
+    
         try {
-            // 發送 POST 請求
-            ResponseEntity<String> response = restTemplate.postForEntity(builder.toUriString(), null, String.class);
+            // Use the RestTemplate to send a GET request, passing path variables
+            ResponseEntity<String> response = restTemplate.getForEntity(
+                    relativeUrl, 
+                    String.class, 
+                    subject, 
+                    noticeMethod, 
+                    recipient
+            );
+    
             System.out.println("通知發送成功: " + response.getBody());
         } catch (Exception e) {
             System.err.println("通知發送失敗: " + e.getMessage());
