@@ -13,6 +13,7 @@ public class Notification {
     private int hour;
     private int minute;
     private boolean isActive = true;
+    private boolean isRepeat;
 
     public Notification(
         int id, 
@@ -26,7 +27,8 @@ public class Notification {
         String dayOfWeek,           // 3,5  1~7 周一 ~ 週日
         int hour,                   // 20時
         int minute,                 // 53分
-        boolean isActive            // 是否啟動中
+        boolean isActive,           // 是否啟動中
+        boolean isRepeat            // 是否重複執行
     ) {
         this.id = id;
         this.subjectName = subjectName;
@@ -40,6 +42,7 @@ public class Notification {
         this.hour = hour;
         this.minute = minute;
         this.isActive = isActive;
+        this.isRepeat = isRepeat;
     }
 
     // Getters and Setters
@@ -138,5 +141,13 @@ public class Notification {
 
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public boolean isRepeat() {
+        return isRepeat;
+    }
+
+    public void setRepeat(boolean isRepeat) {
+        this.isRepeat = isRepeat;
     }
 }
