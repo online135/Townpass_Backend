@@ -1,6 +1,6 @@
 /* 設定網頁的基本樣式 */
 body {
-    font-family: 'Inter', sans-serif; /* 使用 Arial 字體 */
+    font-family: 'Inter', sans-serif; /* 使用 Inter 字體 */
     background-color: #f4f4f4; /* 背景顏色 */
     margin: 0;
     padding: 0;
@@ -194,7 +194,7 @@ input:checked + .slider:before {
 /* 樣式調整確保所有項目對齊 */
 label {
     font-size: 16px; /* 根據需求調整字體大小 */
-    color: #333;
+    color: #5AB4C5;
 }
 
 input::placeholder{
