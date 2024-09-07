@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 // 台北旅遊網 open api 一覽表
@@ -81,64 +82,93 @@ public class NotificationController {
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 
-//     // (2) 列出單一資料 (by Id)
-//     @GetMapping("/{id}")
-//     public ResponseEntity<Notification> getNotificationById(@PathVariable("id") int id) {
-//         for (Notification notification : notifications) {
-//             if (notification.getId() == id) {
-//                 return new ResponseEntity<>(notification, HttpStatus.OK);
-//             }
-//         }
-//         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//     }
 
-//     // (3) 新增資料 post
-//     @PostMapping
-//     public ResponseEntity<Notification> addNotification(@RequestBody Notification notification) {
-//         // notification.setId(idCounter++);
-//         notifications.add(notification);
-//         return new ResponseEntity<>(notification, HttpStatus.CREATED);
-//     }
+    // (2) 列出單一資料 (by Id)
+    // /api/notifications/2
+    @GetMapping("/{id}")
+    public ResponseEntity<Notification> getNotificationById(@PathVariable("id") int id) {
+        for (Notification notification : notifications) {
+            if (notification.getId() == id) {
+                return new ResponseEntity<>(notification, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
-//     // (4) 更新資料 put
-//     @PutMapping("/{update}")
-//     public ResponseEntity<Notification> updateNotification(@PathVariable("id") int id, @RequestBody Notification updatedNotification) {
-//         for (int i = 0; i < notifications.size(); i++) {
-//             if (notifications.get(i).getId() == id) {
-//                 updatedNotification.setId(id);
-//                 notifications.set(i, updatedNotification);
-//                 return new ResponseEntity<>(updatedNotification, HttpStatus.OK);
-//             }
-//         }
-//         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//     }
+    //新增
+    @PostMapping
+    public ResponseEntity<Notification> addNotification(@RequestBody Notification notification) {
+    
+        int nextId = notifications.isEmpty() ? 1 : notifications.stream()
+        .mapToInt(notif -> notif.getId())
+        .max()
+        .getAsInt() + 1;
 
-//     // (5) 刪除資料 delete
-//     @DeleteMapping("/{delete}")
-//     public ResponseEntity<Void> deleteNotification(@PathVariable("id") int id) {
-//         for (Notification notification : notifications) {
-//             if (notification.getId() == id) {
-//                 notifications.remove(notification);
-//                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//             }
-//         }
-//         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//     }
-// //
-//     @GetMapping
-//     public ResponseEntity<List<Notification>> getNotifications() {
-//         return new ResponseEntity<>(notifications, HttpStatus.OK);
-//     }
+    // 設定 id 及狀態
+    notification.setId(nextId);
+    //notification.setStatus("UNPROCESSED");未處理
+    
+    notifications.add(notification);
+   
+    return new ResponseEntity<>(notification, HttpStatus.CREATED);
+}
 
-//     @GetMapping("/{id}")
-//     public ResponseEntity<Notification> getDataById(@PathVariable("id") int id) {
-//         for (Notification item : notifications) {
-//             if (item.getId() == id) {
-//                 return new ResponseEntity<>(item, HttpStatus.OK);
-//             }
-//         }
-//         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//     }
+    
+
+    // (4) 更新資料 put
+   @PutMapping("/{id}")
+public ResponseEntity<String> updateNotification(
+    @PathVariable("id") int id, 
+    @RequestBody Notification payload
+) {
+    for (Notification notification : notifications) {
+        if (notification.getId() == id) {
+            // 更新屬性
+            // notification.setType((String) payload.get("type"));
+            if (payload == null)
+            {
+                break;
+            }
+
+            if (payload.getSubject() != null){
+                notification.setSubject((String) payload.getSubject());
+            }
+
+            //notification.setSubject((String) payload.getSubject());
+            notification.setNoticeMethod((String) payload.getNoticeMethod());
+            notification.setEmail((String) payload.getEmail());
+            notification.setPhone((String) payload.getPhone());
+            notification.setLineNotifyToken((String) payload.getLineNotifyToken());
+            notification.setDayOfWeek((String) payload.getDayOfWeek());
+            notification.setHour((int) payload.getHour());
+            notification.setMinute((int) payload.getMinute());
+            notification.setActive((boolean) payload.isActive());
+
+            // 回應更新成功
+            return new ResponseEntity<>("Notification updated successfully", HttpStatus.OK);
+        }
+    }
+    // 如果找不到資料
+    return new ResponseEntity<>("Notification not found", HttpStatus.NOT_FOUND);
+}
+
+    // (5) 刪除資料 delete
+    @DeleteMapping("/{id}")
+public ResponseEntity<String> deleteNotification(
+    @PathVariable("id") int id
+) {
+    // 尋找並刪除對應的通知
+    for (Notification notification : notifications) {
+        if (notification.getId() == id) {
+            notifications.remove(notification);
+            return new ResponseEntity<>("Notification deleted successfully", HttpStatus.OK);
+        }
+    }
+    // 如果找不到指定的通知
+    return new ResponseEntity<>("Notification not found", HttpStatus.NOT_FOUND);
+}
+
+//
 
     // 排程任務，每分鐘檢查一次通知
     @Scheduled(cron = "0 * * * * *") // 每分鐘執行一次
