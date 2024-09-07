@@ -1,11 +1,11 @@
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\Category.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\DataController.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\DemoApplication.java
+C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\MainCategory.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\Notification.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\RssFeedItem.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\RssFeedResult.java
-C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\Subject.java
-C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\SubjectCategory.java
+C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\model\SubCategory.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\NotificationController.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\RssFeedController.java
 C:\Users\User\Desktop\CityPassHackathon\townpass_backend\src\main\java\com\example\demo\service\EmailService.java
