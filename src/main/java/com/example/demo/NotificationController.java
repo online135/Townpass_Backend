@@ -131,13 +131,14 @@ public class NotificationController {
 
                 // notification.setSubject((String) payload.getSubject());
                 notification.setNoticeMethod((String) payload.getNoticeMethod());
-                notification.setEmail((String) payload.getEmail());
-                notification.setPhone((String) payload.getPhone());
-                notification.setLineNotifyToken((String) payload.getLineNotifyToken());
+                // notification.setEmail((String) payload.getEmail());
+                // notification.setPhone((String) payload.getPhone());
+                // notification.setLineNotifyToken((String) payload.getLineNotifyToken());
+                System.out.println(payload.getDayOfWeek());
                 notification.setDayOfWeek((String) payload.getDayOfWeek());
                 notification.setHour((int) payload.getHour());
                 notification.setMinute((int) payload.getMinute());
-                notification.setActive((boolean) payload.isActive());
+                // notification.setActive((boolean) payload.isActive());
 
                 // 回應更新成功
                 return new ResponseEntity<>("Notification updated successfully", HttpStatus.OK);
