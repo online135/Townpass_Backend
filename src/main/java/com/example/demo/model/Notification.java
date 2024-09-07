@@ -2,21 +2,23 @@ package com.example.demo.model;
 
 public class Notification {
     private int id;
-    private String category;
-    private String subject;
+    private String subjectName;         // 使用者輸入的 中文標題
+    private String mainCategory;
+    private String subCategory;
     private String noticeMethod;
-    private String email;
-    private String phone;
-    private String lineNotifyToken;
+    private String email = "b97b01067@gmail.com";
+    private String phone = "0937338506";
+    private String lineNotifyToken = "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG";
     private String dayOfWeek;
     private int hour;
     private int minute;
-    private boolean isActive;
+    private boolean isActive = true;
 
     public Notification(
         int id, 
-        String category,            // 通知的大類別 ex: news
-        String subject,             // 通知的主題或標題 ex: taipei_news
+        String subjectName,         // 使用者輸入的 中文標題
+        String mainCategory,            // 通知的大類別 ex: news
+        String subCategory,             // 通知的主題或標題 ex: taipei_news
         String noticeMethod,        // line, email, sms, whatsapp
         String email,  
         String phone,
@@ -27,8 +29,9 @@ public class Notification {
         boolean isActive            // 是否啟動中
     ) {
         this.id = id;
-        this.category = category;
-        this.subject = subject;
+        this.subjectName = subjectName;
+        this.mainCategory = mainCategory;
+        this.subCategory = subCategory;
         this.noticeMethod = noticeMethod;
         this.email = email;
         this.phone = phone;
@@ -48,20 +51,28 @@ public class Notification {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public String getSubjectName() {
+        return subjectName;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getMainCategory() {
+        return mainCategory;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setMainCategory(String category) {
+        this.mainCategory = category;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(String subject) {
+        this.subCategory = subject;
     }
 
     public String getNoticeMethod() {

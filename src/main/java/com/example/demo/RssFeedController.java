@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.model.RssFeedResult;
-import com.example.demo.model.Subject;
-import com.example.demo.model.SubjectCategory;
+import com.example.demo.model.SubCategory;
+import com.example.demo.model.MainCategory;
 import com.example.demo.service.EmailService;
 import com.example.demo.service.LineNotifyService;
 import com.example.demo.service.RssFeedService;
@@ -46,7 +46,7 @@ public class RssFeedController {
     private List<MainCategory> mainCategories; // List of all main categories
 
     public RssFeedController() {
-        categories = new ArrayList<>();
+        mainCategories = new ArrayList<>();
 
         // // Example of adding a main category with its respective subjects
         // MainCategory localNews = new MainCategory("local_news", "地方新聞");
@@ -120,9 +120,9 @@ public class RssFeedController {
 
     // API endpoint to get all categories
     // Method to retrieve categories, 取得大分類列表
-    @GetMapping("/categories")
-    public List<SubjectCategory> getCategories() {
-        return categories;
+    @GetMapping("/mainCategories")
+    public List<MainCategory> getMainCategories() {
+        return mainCategories;
     }
 
     // API endpoint to get subjects by category code
@@ -138,15 +138,15 @@ public class RssFeedController {
         return null;
     }
 
-    private String getRssUri(String subject) {
-        for (SubjectCategory category : categories) {
-            for (Subject subj : category.getSubjects()) {
-                if (subj.getCode().equalsIgnoreCase(subject)) {
-                    return subj.getRssUri();
+    private String getRssUri(String inputSubCategory) {
+        for (MainCategory mainCategory : mainCategories) {
+            for (SubCategory subCategory : mainCategory.getSubCategories()) {
+                if (subCategory.getCode().equalsIgnoreCase(inputSubCategory)) {
+                    return subCategory.getRssUri();
                 }
             }
         }
-        return "Subject not found"; // Handle cases where the subject does not exist
+        return "SubCategory not found"; // Handle cases where the subject does not exist
     }
 
     // 寄送通知 api

@@ -1,0 +1,263 @@
+<!--新增模式-->
+<!DOCTYPE html>
+<html lang="zh-Hant"> <!--中文-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- 引用外部 CSS 檔案 -->
+    <link rel="stylesheet" href="style.css">
+
+    <title>設定提醒</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>設定提醒</h1>
+
+        <!-- 新增返回按鈕 -->
+        <button class="back-button" id="backButton">返回</button>
+
+        <!-- 標題輸入框 -->
+        <div class="form-group">
+            <label for="subjectName">標題</label>
+            <input type="text" id="subjectName" placeholder="輸入提醒標題">
+        </div>
+
+        <!-- 時間選擇 -->
+        <div class="form-group">
+            <label for="time">時間</label>
+            <input type="time" id="time" value="${new Date().toISOString().substr(11, 5)}">
+        </div>
+
+        <!-- 重複選單 -->
+         <div class="form-group flex-row">
+            <label for="repeatSwitch">重複</label>
+            <label class="switch">
+                <input type="checkbox" id="repeatSwitch">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <!-- 複選下拉選單（預設隱藏） -->
+        <div class="repeat-container" id="repeatContainer" style="display: none;">
+            <select class="repeat-select" id="dayOfWeek" multiple>
+                <option value="1,2,3,4,5,6,7">每天</option>
+                <option value="1">週一</option>
+                <option value="2">週二</option>
+                <option value="3">週三</option>
+                <option value="4">週四</option>
+                <option value="5">週五</option>
+                <option value="6">週六</option>                    
+                <option value="7">週日</option>
+            </select>
+        </div>
+
+
+        <!-- 主類別選單 -->
+        <div class="form-group">
+            <label for="mainCategory">主類別</label>
+            <select id="mainCategory">
+                <option value="">請選擇</option>
+            </select>
+        </div>
+
+        <!-- 子類別選單 -->
+        <div class="form-group">
+            <label for="subCategory">子類別</label>
+            <select id="subCategory" disabled>
+                <option value="">請選擇</option>
+            </select>
+        </div>
+
+        <!-- 通知方式選單 -->
+        <div class="form-group">
+            <label for="noticeMethod">通知方式</label>
+            <select id="noticeMethod">
+                <option></option>
+                <option value="Line">Line</option>
+                <option value="Email">Email</option>
+                <option value="WhatsApp" disabled>WhatsApp(已停用)</option>
+                <option value="簡訊" disabled>簡訊(已停用)</option>
+            </select>
+            <button class="test-button" id="testNotification">測試</button>
+        </div>
+
+        <!-- 保存按鈕 -->
+        <button class="save-button" id="saveReminder">保存</button>
+    </div>
+
+    <script>
+    
+    //返回鍵設定
+    document.getElementById('backButton').addEventListener('click', function() {
+        
+        const subjectName = document.getElementById('subjectName').value.trim();
+        const time = document.getElementById('time').value;
+        const mainCategory = document.getElementById('mainCategory').value;
+        const subCategory = document.getElementById('subCategory').value;
+        const noticeMethod = document.getElementById('noticeMethod').value;
+
+        // 檢查是否有已輸入的資料
+        if (subjectName || time || mainCategory || subCategory || noticeMethod) {
+            const confirmation = confirm('尚未保存資料，是否要放棄修改並返回？');
+            if (confirmation) {
+                window.history.back(); // 返回上一頁
+            }
+        } else {
+            window.history.back(); // 沒有輸入內容，直接返回上一頁
+        }
+    });
+
+
+        // Fetch categories from the backend
+        async function fetchCategories() {
+            try {
+                const response = await fetch('/api/rss/mainCategories'); // Update URL if needed
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                const categories = await response.json();
+                populateMainCategoryDropdown(categories);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        // Populate the dropdown with main categories
+        function populateMainCategoryDropdown(categories) {
+            const mainCategorySelect = document.getElementById('mainCategory');
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.code; // Using 'code' as value (adjust if necessary)
+                option.textContent = category.displayName; // Using 'displayName' as the label
+                mainCategorySelect.appendChild(option);
+            });
+
+            // Add change event listener to fetch and populate subcategories
+            mainCategorySelect.addEventListener('change', function () {
+                const selectedCategory = mainCategorySelect.value;
+                const subCategorySelect = document.getElementById('subCategory');
+
+                if (selectedCategory) {
+                    fetchSubcategories(selectedCategory);
+                    subCategorySelect.disabled = false; // Enable the subcategory dropdown
+                } else {
+                    clearSubCategoryDropdown(); // Clear subcategory if no main category is selected
+                    subCategorySelect.disabled = true; // Disable the subcategory dropdown
+                }
+            });
+        }
+
+        // Fetch subcategories for the selected main category
+        async function fetchSubcategories(categoryCode) {
+            try {
+                const response = await fetch(`/api/rss/mainCategories/${categoryCode}/`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch subcategories');
+                }
+                const mainCategory = await response.json();
+                populateSubCategoryDropdown(mainCategory.subCategories); // Populate the subcategory dropdown
+            } catch (error) {
+                console.error('Error fetching subcategories:', error);
+            }
+        }
+
+        // Populate the subcategory dropdown
+        function populateSubCategoryDropdown(subCategories) {
+            const subCategorySelect = document.getElementById('subCategory');
+            clearSubCategoryDropdown(); // Clear previous options
+            subCategories.forEach(subCategory => {
+                const option = document.createElement('option');
+                option.value = subCategory.code; // Use the subject code as the value
+                option.textContent = subCategory.displayName; // Use the display name as the label
+                subCategorySelect.appendChild(option);
+            });
+        }
+
+        // Clear the subcategory dropdown
+        function clearSubCategoryDropdown() {
+            const subCategorySelect = document.getElementById('subCategory');
+            subCategorySelect.innerHTML = '<option value="">請選擇</option>';
+        }
+
+        // Call the function to fetch and populate categories on page load
+        document.addEventListener('DOMContentLoaded', fetchCategories);
+
+        document.getElementById('repeatSwitch').addEventListener('change', function() {
+            const repeatContainer = document.getElementById('repeatContainer');
+            
+            // 顯示或隱藏複選下拉選單
+            repeatContainer.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('dayOfWeek').addEventListener('change', function() {
+            const selectedOptions = Array.from(this.selectedOptions).map(option => option.value);
+            
+            // 當選取 "每天" 時，自動選取所有選項
+            if (selectedOptions.includes('每天')) {
+                Array.from(this.options).forEach(option => option.selected = true);
+            }
+        });
+
+        // 測試通知功能
+        document.getElementById('testNotification').addEventListener('click', function() {
+            const method = document.getElementById('noticeMethod').value;
+            if (method === '') {
+                alert('請選擇通知方式後再進行測試。');
+            } else {
+                alert('測試通知已發送到 ' + method);
+            }
+        });
+
+        // 儲存提醒
+        document.getElementById('saveReminder').addEventListener('click', async function() {
+            const subjectName = document.getElementById('subjectName').value.trim();
+            const time = document.getElementById('time').value;
+            const dayOfWeek = Array.from(document.getElementById('dayOfWeek').selectedOptions).map(opt => opt.value).join(', ');
+            const mainCategory = document.getElementById('mainCategory').value;
+            const subCategory = document.getElementById('subCategory').value;
+            const noticeMethod = document.getElementById('noticeMethod').value;
+            const isActive = true;
+
+            if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod ) {
+                alert('請完整填寫資料。');
+                return;
+            }
+
+            // 拆分時間為小時和分鐘
+            const [hour, minute] = time.split(':');
+
+            const reminder = { 
+                subjectName, 
+                hour, 
+                minute, 
+                dayOfWeek, 
+                mainCategory, 
+                subCategory, 
+                noticeMethod,
+                isActive
+            };
+
+            let reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            try {
+                const response =  await axios.post('/api/notifications', reminder, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.status === 201) { // Status 201 indicates resource created
+                    window.location.href = 'index.html';
+                } else {
+                    throw new Error('Failed to save reminder');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

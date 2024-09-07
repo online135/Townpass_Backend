@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,15 +17,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.example.demo.model.Notification;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 // 台北旅遊網 open api 一覽表
 // https://www.travel.taipei/open-api
@@ -47,20 +43,22 @@ public class NotificationController {
         // Sample data
         notifications.add(
                 new Notification(
-                        20,
+                        1,
+                        "測試標題",
                         "weather",
                         "tycg",
                         "line",
                         "b97b01067@gmail.com",
                         "0937338506",
                         "ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG",
-                        "3,5",
-                        7,
-                        22,
+                        "1,2,3,4,5",
+                        23,
+                        35,
                         true));
         notifications.add(
                 new Notification(
-                        10,
+                        2,
+                        "測試標題2",
                         "news",
                         "taipei", // subject
                         "email",
@@ -105,6 +103,10 @@ public class NotificationController {
         notification.setId(nextId);
         // notification.setStatus("UNPROCESSED");未處理
 
+        notification.setEmail("b97b01067@g.ntu.edu.tw");
+        notification.setPhone("0937338506");
+        notification.setLineNotifyToken("ooY1R7ACEpOON76PkHloQ7kdYFDVbTblvRNHafVfFXG");
+
         notifications.add(notification);
 
         return new ResponseEntity<>(notification, HttpStatus.CREATED);
@@ -123,8 +125,8 @@ public class NotificationController {
                     break;
                 }
 
-                if (payload.getSubject() != null) {
-                    notification.setSubject((String) payload.getSubject());
+                if (payload.getSubCategory() != null) {
+                    notification.setSubCategory((String) payload.getSubCategory());
                 }
 
                 // notification.setSubject((String) payload.getSubject());
@@ -177,7 +179,7 @@ public class NotificationController {
 
         for (Notification notification : notifications) {
             System.out.println("====================================================");
-            System.out.println("開始進行 " + notification.getSubject() + " 執行與否判斷");
+            System.out.println("開始進行 " + notification.getSubCategory() + " 執行與否判斷");
 
             // 檢查是否啟動中
             if (!notification.isActive()) {
@@ -209,7 +211,7 @@ public class NotificationController {
                 continue; // 如果分鐘不對，跳到下一個通知
             }
 
-            System.out.println("開始執行: " + notification.getSubject());
+            System.out.println("開始執行: " + notification.getSubCategory());
             performCrontabTask(notification);
         }
     }
@@ -222,7 +224,7 @@ public class NotificationController {
 
         // 使用 URI Builder 構建完整 URL 和參數
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-                .queryParam("subject", notification.getSubject())
+                .queryParam("subject", notification.getSubCategory())
                 .queryParam("noticeMethod", notification.getNoticeMethod())
                 .queryParam("recipient", recipient);
 
