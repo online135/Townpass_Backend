@@ -3,6 +3,7 @@
 <html lang="zh-Hant"> <!--中文-->
 <head>
     <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>設定提醒</title>
@@ -236,11 +237,17 @@ label {
         <!-- 保存按鈕 -->
         <button class="save-button" id="saveReminder">保存</button>
     </div>
-
+</body>
+</html>
 
 
     <script>
-        
+        // 从 URL 中获取 id 参数
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
         // 顯示或隱藏複選下拉選單
         document.getElementById('repeatSwitch').addEventListener('change', function() {
             const repeatContainer = document.getElementById('repeatContainer');
@@ -309,22 +316,40 @@ label {
 
     // 加載正在編輯的提醒
     document.addEventListener('DOMContentLoaded', function() {
-        const editingReminder = JSON.parse(localStorage.getItem('editingReminder'));
-        if (editingReminder) {
-            document.getElementById('title').value = editingReminder.title;
-            document.getElementById('time').value = editingReminder.time;
-            // 設置重複模式和其他資料
-            document.getElementById('mainCategory').value = editingReminder.mainCategory;
-            document.getElementById('subCategory').value = editingReminder.subCategory;
-            document.getElementById('notificationMethod').value = editingReminder.notificationMethod;
-            localStorage.setItem('editingReminderTitle', editingReminder.title);  // 儲存編輯提醒的標題
-        }
-    });
+        const notificationId = getQueryParam('id');
+        if (notificationId) {
+        // 从后端获取提醒数据
+        axios.get(`/api/notifications/${notificationId}`)
+        .then(response => {
+        let notification = response.data; // 從後端取得的提醒資料
 
-        var select = document.getElementById("簡訊");
-        var optionToDisable = select.option[4];
-        optionToDisable.disabled=true;
+        // 更新页面上的提醒详情
+        console.log(notification.subject);
+        // 將資料填充到輸入框中
+        document.getElementById('title').value = notification.subject || '';
+        })
+        .catch(error => {
+            console.error('Error fetching notification:', error);
+        });
 
-    </script>
-</body>
-</html>
+        // const editingReminder = JSON.parse(localStorage.getItem('editingReminder'));
+        // if (editingReminder) {
+        //     document.getElementById('title').value = editingReminder.title;
+        //     document.getElementById('time').value = editingReminder.time;
+        //     // 設置重複模式和其他資料
+        //     document.getElementById('mainCategory').value = editingReminder.mainCategory;
+        //     document.getElementById('subCategory').value = editingReminder.subCategory;
+        //     document.getElementById('notificationMethod').value = editingReminder.notificationMethod;
+        //     localStorage.setItem('editingReminderTitle', editingReminder.title);  // 儲存編輯提醒的標題
+        // }
+        
+    }
+
+    // var select = document.getElementById("簡訊");
+    //     var optionToDisable = select.option[4];
+    //     optionToDisable.disabled=true;
+});
+
+
+</script>
+
