@@ -45,30 +45,30 @@
     </div>
 
     <script>
-        // Define the user object if not already defined in your Vue instance or globally
-        const user = { value: null }; // Adjust this based on your application's actual data structure
+        // // Define the user object if not already defined in your Vue instance or globally
+        // const user = { value: null }; // Adjust this based on your application's actual data structure
 
-        // Handle 'userinfo' message from Flutter
-        const handleUserInfo = (event) => {
-        try {
-            // Parse the event data assuming it's JSON formatted
-            const result = JSON.parse(event.data);
+        // // Handle 'userinfo' message from Flutter
+        // const handleUserInfo = (event) => {
+        // try {
+        //     // Parse the event data assuming it's JSON formatted
+        //     const result = JSON.parse(event.data);
 
-            // Check if the result has the expected properties
-            if (result && result.data) {
-            // Update the user object with the received data
-            user.value = result.data;
-            console.log('Received User Info:', result.data); // Optional: Log the received data for debugging
-            } else {
-            console.error('Invalid data format:', result);
-            }
-        } catch (error) {
-            console.error('Error parsing event data:', error);
-        }
-        };
+        //     // Check if the result has the expected properties
+        //     if (result && result.data) {
+        //     // Update the user object with the received data
+        //     user.value = result.data;
+        //     console.log('Received User Info:', result.data); // Optional: Log the received data for debugging
+        //     } else {
+        //     console.error('Invalid data format:', result);
+        //     }
+        // } catch (error) {
+        //     console.error('Error parsing event data:', error);
+        // }
+        // };
 
-        // Add the event listener to handle messages from Flutter
-        window.addEventListener('message', handleUserInfo);
+        // // Add the event listener to handle messages from Flutter
+        // window.addEventListener('message', handleUserInfo);
 
         document.addEventListener('DOMContentLoaded', function() {
             new Vue({
