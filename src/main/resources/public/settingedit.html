@@ -270,6 +270,7 @@
         const mainCategory = document.getElementById('mainCategory').value;
         const subCategory = document.getElementById('subCategory').value;
         const noticeMethod = document.getElementById('noticeMethod').value;
+        const isRepeat = document.getElementById('repeatSwitch').checked; // Capture the repeat switch value
 
         if (!subjectName || !time || !mainCategory || !subCategory || !noticeMethod) {
             alert('請填寫所有欄位。');
@@ -288,7 +289,8 @@
             dayOfWeek, 
             mainCategory, 
             subCategory, 
-            noticeMethod
+            noticeMethod,
+            isRepeat // Add isRepeat to the data sent to the backend
         };
         
         try {

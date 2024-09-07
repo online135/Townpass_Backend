@@ -132,16 +132,36 @@ public class NotificationController {
                     notification.setSubCategory((String) payload.getSubCategory());
                 }
 
-                notification.setSubjectName((String) payload.getSubjectName());
-                notification.setNoticeMethod((String) payload.getNoticeMethod());
+                
+                if (payload.getSubjectName() != null) {
+                    notification.setSubjectName((String) payload.getSubjectName());
+                }
+
+                if (payload.getNoticeMethod() != null) {
+                    notification.setNoticeMethod((String) payload.getNoticeMethod());
+                }
+
                 // notification.setEmail((String) payload.getEmail());
                 // notification.setPhone((String) payload.getPhone());
                 // notification.setLineNotifyToken((String) payload.getLineNotifyToken());
                 System.out.println(payload.getDayOfWeek());
-                notification.setDayOfWeek((String) payload.getDayOfWeek());
-                notification.setHour((int) payload.getHour());
-                notification.setMinute((int) payload.getMinute());
+
+                if (payload.getDayOfWeek() != null) {
+                    notification.setDayOfWeek((String) payload.getDayOfWeek());
+                }
+
+                if (payload.getHour() != -1) {
+                    notification.setHour((int) payload.getHour());
+                }
+
+                if (payload.getMinute() != -1) {
+                    notification.setMinute((int) payload.getMinute());
+                }
+
                 // notification.setActive((boolean) payload.isActive());
+
+                notification.setRepeat((boolean) payload.isRepeat());
+                
 
                 // 回應更新成功
                 return new ResponseEntity<>("Notification updated successfully", HttpStatus.OK);
@@ -198,8 +218,8 @@ public class NotificationController {
             // 檢查當前星期是否在通知的 weekday 列表中
             String currentWeekdayValue = String.valueOf(currentWeekday.getValue());
 
-            // 星期天為 7
-            if (!notificationWeekdayList.contains(currentWeekdayValue)) {
+            // 星期天為 7, repeat 模式忽略
+            if (!notificationWeekdayList.contains(currentWeekdayValue) && notification.isRepeat()) {
                 System.out.println("現在週的時間: " + currentWeekdayValue);
                 System.out.println("排程週的時間: " + notificationWeekdayList);
 
@@ -225,23 +245,19 @@ public class NotificationController {
                 continue; // 如果分鐘不對，跳到下一個通知
             }
 
+            System.out.println("開始執行: " + notification.getSubCategory());
+            performCrontabTask(notification);
 
             // 這裡已經確定會執行, 如果不重複, 則把 active 關掉
             if (!notification.isRepeat())
             {
                 try {
-                    // 發送 GET 請求
-                    // 實作通知的執行邏輯
-                    ResponseEntity<String> response = directExecute(notification.getId());
-                    System.out.println("通知已關閉成功: " + response.getBody());
+                    System.out.println("通知已關閉成功");
                 } catch (Exception e) {
                     System.err.println("通知關閉失敗: " + e.getMessage());
                 }
 
             }
-
-            System.out.println("開始執行: " + notification.getSubCategory());
-            performCrontabTask(notification);
         }
     }
 
