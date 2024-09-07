@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 public class Notification {
     private int id;
+    private String subjectName;         // 使用者輸入的 中文標題
     private String category;
     private String subject;
     private String noticeMethod;
@@ -15,6 +16,7 @@ public class Notification {
 
     public Notification(
         int id, 
+        String subjectName,         // 使用者輸入的 中文標題
         String category,            // 通知的大類別 ex: news
         String subject,             // 通知的主題或標題 ex: taipei_news
         String noticeMethod,        // line, email, sms, whatsapp
@@ -27,6 +29,7 @@ public class Notification {
         boolean isActive            // 是否啟動中
     ) {
         this.id = id;
+        this.subjectName = subjectName;
         this.category = category;
         this.subject = subject;
         this.noticeMethod = noticeMethod;
@@ -46,6 +49,14 @@ public class Notification {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
     public String getCategory() {
