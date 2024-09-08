@@ -47,7 +47,7 @@ public class NotificationController {
                         1,
                         "測試標題",
                         "TheNewest",
-                        "PeoplePost",
+                        "TheNewLens",
                         "line",
                         "b97b01067@gmail.com",
                         "0937338506",
